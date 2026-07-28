@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSVP - {{ event[1] }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #e8f0fe 0%, #f0f4f8 100%); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            min-height: 100vh; 
+            padding: 20px 0; 
+        }
+        .form-container { max-width: 750px; margin: 0 auto; }
+        .card { border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.12); border: none; overflow: hidden; }
+        .card-header { 
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6); 
+            color: white; 
+            padding: 25px 30px; 
+            text-align: center; 
+        }
+        .card-header h2 { font-weight: 700; margin-bottom: 5px; font-size: 24px; }
+        .card-header .subtitle { opacity: 0.9; font-size: 14px; }
+        .card-header .society-name { 
+            font-size: 16px; 
+            font-weight: 600; 
+            margin-top: 8px;
+            opacity: 0.95;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 10px;
+        }
+        .card-body { padding: 30px; }
+        .form-label { font-weight: 600; color: #1e293b; font-size: 14px; }
+        .form-control, .form-select { 
+            border-radius: 10px; 
+            border: 2px solid #e2e8f0; 
+            padding: 10px 15px; 
+            transition: all 0.3s; 
+            font-size: 14px; 
+        }
+        .form-control:focus, .form-select:focus { 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 4px rgba(59,130,246,0.15); 
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .section-title { 
+            font-size: 17px; 
+            font-weight: 700; 
+            padding: 12px 18px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        .section-common { 
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe); 
+            color: #1e40af; 
+            border-left: 5px solid #2563eb; 
+        }
+        .section-culture { 
+            background: linear-gradient(135deg, #f3e8ff, #e9d5ff); 
+            color: #6b21a8; 
+            border-left: 5px solid #7c3aed; 
+        }
+        .section-saraswati { 
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0); 
+            color: #065f46; 
+            border-left: 5px solid #059669; 
+        }
+        .section-jamvanu { 
+            background: linear-gradient(135deg, #fef3c7, #fde68a); 
+            color: #92400e; 
+            border-left: 5px solid #f59e0b; 
+        }
+        .btn-submit { 
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6); 
+            color: white; 
+            border: none; 
+            padding: 12px 40px; 
+            border-radius: 50px; 
+            font-weight: 600; 
+            font-size: 16px; 
+            transition: all 0.3s; 
+            width: 100%; 
+        }
+        .btn-submit:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 25px rgba(59,130,246,0.4); 
+            color: white; 
+        }
+        .expired-banner { 
+            background: #fef2f2; 
+            border: 2px solid #fca5a5; 
+            border-radius: 12px; 
+            padding: 20px; 
+            text-align: center; 
+            color: #991b1b; 
+        }
+        .expired-banner i { font-size: 40px; display: block; margin-bottom: 10px; }
+        .file-upload-wrapper { 
+            position: relative; 
+            border: 2px dashed #d1d5db; 
+            border-radius: 12px; 
+            padding: 20px; 
+            text-align: center; 
+            transition: all 0.3s; 
+            cursor: pointer; 
+            background: #fafafa; 
+        }
+        .file-upload-wrapper:hover { border-color: #3b82f6; background: #f0f7ff; }
+        .file-upload-wrapper input[type="file"] { 
+            position: absolute; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            opacity: 0; 
+            cursor: pointer; 
+        }
+        .file-upload-wrapper .upload-icon { font-size: 35px; color: #9ca3af; margin-bottom: 8px; }
+        .file-upload-wrapper .upload-text { color: #6b7280; font-size: 14px; }
+        .file-upload-wrapper .upload-text strong { color: #3b82f6; }
+        .file-name-display { 
+            margin-top: 10px; 
+            padding: 8px 15px; 
+            background: #e8f0fe; 
+            border-radius: 8px; 
+            display: none; 
+            font-size: 13px; 
+            color: #1e3a8a; 
+        }
+        .file-name-display.show { display: block; }
+        .help-text { font-size: 12px; color: #6b7280; margin-top: 4px; }
+        .form-divider { border: none; border-top: 2px dashed #d1d5db; margin: 25px 0; }
+        .event-banner { 
+            padding: 15px 20px; 
+            border-radius: 12px; 
+            text-align: center; 
+            font-size: 18px; 
+            font-weight: 700; 
+            margin-bottom: 25px; 
+        }
+        .banner-culture { background: #f3e8ff; color: #6b21a8; border: 2px solid #7c3aed; }
+        .banner-saraswati { background: #d1fae5; color: #065f46; border: 2px solid #059669; }
+        .banner-jamvanu { background: #fef3c7; color: #92400e; border: 2px solid #f59e0b; }
+        .badge-event { padding: 4px 12px; border-radius: 50px; font-size: 12px; }
+        .badge-saraswati { background: #059669; color: white; }
+        .badge-culture { background: #7c3aed; color: white; }
+        .badge-jamvanu { background: #f59e0b; color: white; }
+        .member-select-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .member-select-container select {
+            flex: 1;
+            min-width: 150px;
+        }
+        .member-select-container .btn-add-member {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .member-select-container .btn-add-member:hover {
+            background: #2563eb;
+            color: white;
+        }
+        .selected-members-list {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .selected-members-list .member-tag {
+            background: #e8f0fe;
+            color: #1e3a8a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .selected-members-list .member-tag .remove-member {
+            cursor: pointer;
+            color: #ef4444;
+            font-weight: bold;
+        }
+        @media (max-width: 576px) { 
+            .card-body { padding: 20px; } 
+            .card-header { padding: 20px; } 
+            .card-header h2 { font-size: 20px; } 
+        }
+    </style>
+</head>
+<body>
+    <div class="container form-container">
+        <div class="card">
+            <div class="card-header">
+                <div class="society-name">
+                    શ્રી કચ્છ કડવા પાટીદાર સત્સંગ સમાજ, નડિયાદ
+                </div>
+                <h2 class="mt-2"><i class="fas fa-calendar-plus me-2"></i> {{ event[1] }}</h2>
+                <div class="subtitle">
+                    <i class="far fa-calendar-alt me-1"></i> તારીખ: {{ event[2] }}
+                    {% if event[3] %}
+                    <span class="ms-3"><i class="far fa-clock me-1"></i> ડેડલાઈન: {{ event[3] }}</span>
+                    {% endif %}
+                    <span class="ms-3 badge bg-light text-dark">
+                        {% if event[4] == 'culture' %}🎭 સાંસ્કૃતિક
+                        {% elif event[4] == 'saraswati' %}📚 સરસ્વતી
+                        {% elif event[4] == 'jamvanu' %}🍽️ જમવાનું
+                        {% else %}{{ event[4]|upper }}{% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if is_expired %}
+                <div class="expired-banner">
+                    <i class="fas fa-hourglass-end"></i>
+                    <h4>ક્ષમા કરશો!</h4>
+                    <p>આ ઇવેન્ટની RSVP ડેડલાઈન પૂરી થઈ ગઈ છે.<br>તમે હવે ફોર્મ ભરી શકતા નથી.</p>
+                </div>
+                {% else %}
+
+                <!-- ========================================================= -->
+                <!-- EVENT TYPE BANNER - ફક્ત ઇવેન્ટનું નામ (RSVP શબ્દ વગર) -->
+                <!-- ========================================================= -->
+                {% if event[4] == 'culture' %}
+                <div class="event-banner banner-culture">
+                    <i class="fas fa-music me-2"></i> સાંસ્કૃતિક કાર્યક્રમ
+                </div>
+                {% elif event[4] == 'saraswati' %}
+                <div class="event-banner banner-saraswati">
+                    <i class="fas fa-graduation-cap me-2"></i> સરસ્વતી સન્માન
+                </div>
+                {% elif event[4] == 'jamvanu' %}
+                <div class="event-banner banner-jamvanu">
+                    <i class="fas fa-utensils me-2"></i> જમવાનું કાર્યક્રમ
+                </div>
+                {% endif %}
+
+                <form method="POST" enctype="multipart/form-data">
+                    
+                    <!-- ===== COMMON SECTION ===== -->
+                    <div class="section-title section-common">
+                        <i class="fas fa-users"></i> પરિવાર અને સભ્ય વિગત
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label"><i class="fas fa-users me-2"></i> તમારો પરિવાર પસંદ કરો *</label>
+                        <select name="family_id" class="form-select" required>
+                            <option value="">-- પરિવાર પસંદ કરો --</option>
+                            {% for f in families %}
+                            <option value="{{ f[0] }}">{{ f[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label"><i class="fas fa-user me-2"></i> સભ્યનું પૂરું નામ *</label>
+                        <input type="text" name="member_name" class="form-control" placeholder="દા.ત. રમેશભાઈ પટેલ" required>
+                    </div>
+
+                    <hr class="form-divider">
+
+                    <!-- ===== CULTURE SECTION ===== -->
+                    {% if event[4] == 'culture' %}
+                    <div class="section-title section-culture">
+                        <i class="fas fa-music"></i> 🎭 સાંસ્કૃતિક કાર્યક્રમની વિગત
+                        <span class="badge-event badge-culture ms-2">સાંસ્કૃતિક</span>
+                    </div>
+
+                    <input type="hidden" name="performance_type" value="culture">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">વસ્તુ / કાર્યક્રમનું નામ *</label>
+                            <input type="text" name="item_name" class="form-control" placeholder="દા.ત. ગરબા, ભજન" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">લીડરનું નામ</label>
+                            <input type="text" name="leader_name" class="form-control" placeholder="લીડરનું પૂરું નામ">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">લીડરનો મોબાઈલ</label>
+                            <input type="text" name="leader_mobile" class="form-control" placeholder="98765 43210">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">કાર્યક્રમની અવધિ</label>
+                            <input type="text" name="program_duration" class="form-control" placeholder="દા.ત. 5 મિનિટ">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">સહભાગીઓની સંખ્યા</label>
+                            <input type="number" name="participants_count" class="form-control" value="1" min="1">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">સહભાગીઓના નામ *</label>
+                            <textarea name="participants_names" class="form-control" rows="3" placeholder="બધા સહભાગીઓના નામ (દરેક નામ નવી લાઇનમાં)"></textarea>
+                            <div class="help-text">દા.ત. <br>રમેશ પટેલ<br>સુરેશ શાહ<br>મીના દેસાઈ</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-paperclip me-2"></i> ફોટો / ઓડિયો / વિડિયો અપલોડ કરો</label>
+                        <div class="file-upload-wrapper" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <div class="upload-text">
+                                <strong>ક્લિક કરો</strong> અથવા ફાઈલ અહીં ખેંચીને મૂકો<br>
+                                <small>JPG, PNG, MP3, MP4 (Max 100MB)</small>
+                            </div>
+                            <input type="file" name="uploaded_file" id="fileInput" accept=".jpg,.jpeg,.png,.gif,.webp,.mp3,.wav,.ogg,.mp4,.webm,.mov">
+                            <div class="file-name-display" id="fileNameDisplay">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span id="fileNameText">કોઈ ફાઈલ પસંદ કરી નથી</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- ===== SARASWATI SECTION ===== -->
+                    {% if event[4] == 'saraswati' %}
+                    <div class="section-title section-saraswati">
+                        <i class="fas fa-graduation-cap"></i> 📚 સરસ્વતી સન્માન વિગત
+                        <span class="badge-event badge-saraswati ms-2">સરસ્વતી</span>
+                    </div>
+
+                    <input type="hidden" name="performance_type" value="saraswati">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">વિદ્યાર્થીનો મોબાઈલ નંબર *</label>
+                            <input type="tel" name="mobile_number" class="form-control" placeholder="98765 43210" required>
+                            <div class="help-text">દા.ત. 98765 43210</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">ધોરણ / સ્ટાન્ડર્ડ</label>
+                            <input type="text" name="standard" class="form-control" placeholder="દા.ત. 10, 12, B.Com">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">ટકાવારી / Percentage</label>
+                            <input type="text" name="percentage" class="form-control" placeholder="દા.ત. 85%">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">શૈક્ષણિક વર્ષ</label>
+                            <input type="text" name="academic_year" class="form-control" placeholder="દા.ત. 2025-26">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">સેમેસ્ટર</label>
+                            <input type="text" name="semester" class="form-control" placeholder="દા.ત. 1, 2">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">કુલ ગુણ (Total Marks)</label>
+                            <input type="text" name="total_marks" class="form-control" placeholder="દા.ત. 500">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">પ્રાપ્ત ગુણ (Obtained Marks)</label>
+                            <input type="text" name="obtained_marks" class="form-control" placeholder="દા.ત. 450">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">અન્ય માહિતી</label>
+                        <textarea name="other_info" class="form-control" rows="2" placeholder="જો કોઈ અન્ય માહિતી આપવી હોય તો..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-paperclip me-2"></i> માર્કશીટ / ફોટો અપલોડ કરો</label>
+                        <div class="file-upload-wrapper" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <div class="upload-text">
+                                <strong>ક્લિક કરો</strong> અથવા ફાઈલ અહીં ખેંચીને મૂકો<br>
+                                <small>PDF, JPG, PNG (Max 100MB)</small>
+                            </div>
+                            <input type="file" name="uploaded_file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp">
+                            <div class="file-name-display" id="fileNameDisplay">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span id="fileNameText">કોઈ ફાઈલ પસંદ કરી નથી</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- ===== JAMVANU SECTION ===== -->
+                    {% if event[4] == 'jamvanu' %}
+                    <div class="section-title section-jamvanu">
+                        <i class="fas fa-utensils"></i> 🍽️ જમવાની વિગત
+                        <span class="badge-event badge-jamvanu ms-2">જમવાનું</span>
+                    </div>
+
+                    <input type="hidden" name="performance_type" value="jamvanu">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">કુલ વ્યક્તિઓની સંખ્યા *</label>
+                            <input type="number" name="head_count" class="form-control" value="1" min="1" required>
+                            <div class="help-text">તમારા પરિવારમાંથી કેટલા લોકો જમવા આવશે?</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">ખાસ સૂચના</label>
+                            <input type="text" name="other_info" class="form-control" placeholder="દા.ત. જૈન ભોજન, વગેરે">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-user me-2"></i> આવનાર સભ્યોના નામ</label>
+                        
+                        <!-- Select + Manual Input -->
+                        <div class="member-select-container">
+                            <select id="memberSelect" class="form-select">
+                                <option value="">-- સભ્ય પસંદ કરો --</option>
+                                {% for f in families %}
+                                    <option value="{{ f[1] }}">{{ f[1] }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" class="btn-add-member" onclick="addSelectedMember()">
+                                <i class="fas fa-plus"></i> ઉમેરો
+                            </button>
+                            <input type="text" id="manualMemberInput" class="form-control" placeholder="અથવા નામ લખો" style="flex:1; min-width:150px;">
+                            <button type="button" class="btn-add-member" onclick="addManualMember()">
+                                <i class="fas fa-plus"></i> ઉમેરો
+                            </button>
+                        </div>
+                        <div class="help-text">ડ્રોપડાઉનમાંથી સભ્ય પસંદ કરો અથવા મેન્યુઅલી નામ લખો</div>
+                        
+                        <!-- Selected Members Display -->
+                        <div class="selected-members-list" id="selectedMembersList"></div>
+                        
+                        <!-- Hidden textarea to store all names -->
+                        <textarea name="participants_names" id="participantsNamesHidden" class="form-control" rows="3" style="display:none;"></textarea>
+                        
+                        <div class="help-text mt-2">
+                            <i class="fas fa-info-circle me-1"></i> ઉમેરેલા સભ્યો ઉપર દેખાશે. દૂર કરવા માટે <strong>✕</strong> ક્લિક કરો.
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <hr class="form-divider">
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane me-2"></i> સબમિટ કરો
+                    </button>
+
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // JAMVANU - MEMBER SELECTION LOGIC
+        // ============================================================
+        let selectedMembers = [];
+
+        function updateHiddenTextarea() {
+            const textarea = document.getElementById('participantsNamesHidden');
+            textarea.value = selectedMembers.join('\n');
+        }
+
+        function renderSelectedMembers() {
+            const container = document.getElementById('selectedMembersList');
+            if (selectedMembers.length === 0) {
+                container.innerHTML = '<span class="text-muted" style="font-size:13px;">હજુ કોઈ સભ્ય ઉમેર્યા નથી</span>';
+                return;
+            }
+            container.innerHTML = selectedMembers.map((name, index) => 
+                `<span class="member-tag">
+                    ${name}
+                    <span class="remove-member" onclick="removeMember(${index})">✕</span>
+                </span>`
+            ).join('');
+            updateHiddenTextarea();
+        }
+
+        function addSelectedMember() {
+            const select = document.getElementById('memberSelect');
+            const name = select.value;
+            if (name && name.trim() !== '') {
+                selectedMembers.push(name.trim());
+                renderSelectedMembers();
+                select.value = '';
+            } else {
+                alert('કૃપા કરીને પરિવાર પસંદ કરો.');
+            }
+        }
+
+        function addManualMember() {
+            const input = document.getElementById('manualMemberInput');
+            const name = input.value;
+            if (name && name.trim() !== '') {
+                selectedMembers.push(name.trim());
+                renderSelectedMembers();
+                input.value = '';
+            } else {
+                alert('કૃપા કરીને નામ લખો.');
+            }
+        }
+
+        function removeMember(index) {
+            selectedMembers.splice(index, 1);
+            renderSelectedMembers();
+        }
+
+        // Enter key support for manual input
+        document.getElementById('manualMemberInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addManualMember();
+            }
+        });
+
+        // ============================================================
+        // FILE UPLOAD
+        // ============================================================
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = this.files[0];
+            const display = document.getElementById('fileNameDisplay');
+            const text = document.getElementById('fileNameText');
+            if (file) {
+                text.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+                display.classList.add('show');
+            } else {
+                text.textContent = 'કોઈ ફાઈલ પસંદ કરી નથી';
+                display.classList.remove('show');
+            }
+        });
+
+        const wrapper = document.querySelector('.file-upload-wrapper');
+        if (wrapper) {
+            wrapper.addEventListener('dragover', function(e) { 
+                e.preventDefault(); 
+                this.style.borderColor = '#3b82f6'; 
+                this.style.background = '#eff6ff'; 
+            });
+            wrapper.addEventListener('dragleave', function(e) { 
+                e.preventDefault(); 
+                this.style.borderColor = '#d1d5db'; 
+                this.style.background = '#fafafa'; 
+            });
+            wrapper.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#d1d5db';
+                this.style.background = '#fafafa';
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    document.getElementById('fileInput').files = files;
+                    document.getElementById('fileInput').dispatchEvent(new Event('change'));
+                }
+            });
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h3 class="fw-bold"><i class="fas fa-address-book text-primary"></i> સમાજ ડિરેક્ટરી</h3>
+        <p class="text-muted mb-0">કુલ ફાર્મ/પરિવાર: {{ families|length }}</p>
+    </div>
+    <!-- PDF, Excel અને લેબલ પ્રિન્ટના બટનો તથા સર્ચ બાર -->
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="🔍 સર્ચ કરો..." style="width: 220px;" onkeyup="filterDirectory()">
+        
+        <a href="/directory/export/pdf" class="btn btn-danger btn-sm"><i class="fas fa-file-pdf"></i> PDF</a>
+        <a href="/directory/export/excel" class="btn btn-success btn-sm"><i class="fas fa-file-excel"></i> Excel</a>
+        <a href="/directory/labels" class="btn btn-dark btn-sm" target="_blank"><i class="fas fa-tags"></i> લેબલ પ્રિન્ટ (A4)</a>
+        <a href="https://api.whatsapp.com/send?text={{ url_for('download_labels_pdf', _external=True) }}" target="_blank" class="btn btn-success btn-sm"><i class="fab fa-whatsapp"></i> WhatsApp પર મોકલો</a>
+    </div>
+</div>
+
+<div class="row g-3" id="directoryList">
+    {% for f in families %}
+    <div class="col-md-6 col-lg-4 directory-item" data-search="{{ f.firm_name }} {{ f.head_name }} {{ f.mobile }} {{ f.address }}">
+        <div class="card shadow-sm border-0 rounded-4 h-100" style="border: 1.5px solid #e2e8f0 !important;">
+            <div class="card-body">
+                <h5 class="fw-bold text-success mb-2">
+                    <i class="fas fa-home"></i> {{ f.firm_name if f.firm_name else 'અનામત ફાર્મ' }}
+                </h5>
+                <hr class="my-2">
+                <p class="mb-1"><strong>👤 મુખ્ય સભ્ય:</strong> <span class="text-dark fw-semibold">{{ f.head_name if f.head_name else 'નક્કી કરેલ નથી' }}</span></p>
+                <p class="mb-1"><strong>📞 મોબાઈલ:</strong> <a href="tel:{{ f.mobile }}" class="text-decoration-none">{{ f.mobile if f.mobile else '-' }}</a></p>
+                <p class="mb-1"><strong>📅 જન્મ તારીખ:</strong> {{ f.birth_date | format_date_to_indian if f.birth_date else '-' }}</p>
+                <p class="mb-1"><strong>💼 વ્યવસાય / અભ્યાસ:</strong> {{ f.business_study if f.business_study else '-' }}</p>
+                <p class="mb-1"><strong>📍 એડ્રેસ:</strong> {{ f.address if f.address else '-' }}</p>
+                <p class="mb-2"><strong>👥 ટોટલ સભ્યો:</strong> <a href="/family/{{ f.id }}/members" class="badge bg-primary text-decoration-none fs-6">{{ f.total_members }} સભ્યો</a></p>
+            </div>  
+            <div class="card-footer bg-light border-0 d-flex justify-content-between rounded-bottom-4 py-2">
+                <a href="/directory/family/{{ f.id }}/members" class="btn btn-sm btn-outline-primary"><i class="fas fa-users"></i> સભ્યો જુઓ</a>
+                <a href="/family/edit/{{ f.id }}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i> એડિટ</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function filterDirectory() {
+    let input = document.getElementById('searchInput').value.toLowerCase();
+    let items = document.getElementsByClassName('directory-item');
+    for (let i = 0; i < items.length; i++) {
+        let text = items[i].getAttribute('data-search').toLowerCase();
+        items[i].style.display = text.includes(input) ? "" : "none";
+    }
+}
+</script>
+{% endblock %}

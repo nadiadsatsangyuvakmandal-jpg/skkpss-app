@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}પરિવારના સભ્યો - સમાજ સિસ્ટમ{% endblock %}
+
+{% block content %}
+<style>
+    * { box-sizing: border-box; }
+
+    .member-row-card {
+        background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+        padding: 12px 14px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        display: flex; align-items: center; gap: 12px;
+    }
+    .member-row-idx {
+        width: 28px; height: 28px; min-width: 28px; border-radius: 50%;
+        background: #eff6ff; color: #1e3a8a; display: flex; align-items: center;
+        justify-content: center; font-size: 12px; font-weight: 700;
+    }
+    .member-row-info { flex: 1; min-width: 0; }
+    .member-row-name { font-weight: 700; color: #1e293b; font-size: 14.5px; }
+    .member-row-meta { font-size: 12px; color: #64748b; margin-top: 3px; display: flex; flex-wrap: wrap; gap: 3px 10px; }
+    .member-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .member-row-actions a {
+        width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+        border-radius: 8px; text-decoration: none; font-size: 13px;
+    }
+    .act-edit-mr { background: #fef3c7; color: #d97706; }
+    .act-delete-mr { background: #fee2e2; color: #dc2626; }
+
+    .page-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .page-actions .btn { border-radius: 8px; font-weight: 600; font-size: 13px; }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: #94a3b8; }
+</style>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0"><i class="fas fa-users me-2"></i> {{ family[0] }} ({{ family[1] }}) ના પરિવારના સભ્યો</h4>
+    </div>
+    <div class="card-body">
+        <div class="page-actions">
+            <a href="/family/{{ family_id }}/add-member" class="btn btn-success-custom">
+                <i class="fas fa-plus me-1"></i> નવો સભ્ય ઉમેરો
+            </a>
+            <a href="/families" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> રજીસ્ટર પર પાછા જાઓ
+            </a>
+        </div>
+
+        {% for member in members %}
+        <div class="member-row-card">
+            <div class="member-row-idx">{{ loop.index }}</div>
+            <div class="member-row-info">
+                <div class="member-row-name">{{ member[2] }}</div>
+                <div class="member-row-meta">
+                    <span>📱 {{ member[3] }}</span>
+                    <span>🎓 {{ member[4] }}</span>
+                    <span>🎂 {{ member[5] }}</span>
+                </div>
+            </div>
+            <div class="member-row-actions">
+                <a href="/family/{{ family_id }}/edit-member/{{ member[0] }}" class="act-edit-mr" title="એડિટ"><i class="fas fa-edit"></i></a>
+                <a href="/family/{{ family_id }}/delete-member/{{ member[0] }}" class="act-delete-mr" title="કાઢો" onclick="return confirm('શું તમે ખરેખર આ સભ્યને ડીલીટ કરવા માંગો છો?');"><i class="fas fa-trash"></i></a>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-user-slash fa-2x d-block mb-2"></i>
+            આ પરિવારમાં હજુ કોઈ સભ્ય ઉમેરેલા નથી.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

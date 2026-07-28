@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="gu" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}સમાજ સિસ્ટમ{% endblock %}</title>
+    
+    <!-- Bootstrap & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- PWA META TAGS -->
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+<style>
+    /* મોબાઇલ એપ વ્યુ માટે ફોર્સ્ડ ફિટિંગ */
+    html, body {
+        width: 100% !important;
+        overflow-x: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .container, .container-fluid {
+        width: 100% !important;
+        padding-right: 12px !important;
+        padding-left: 12px !important;
+        margin-right: auto !important;
+        margin-left: auto !important;
+    }
+    input, select, textarea, .form-control {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+</style>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding-bottom: 60px; transition: all 0.3s; }
+        .navbar-custom {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .navbar-custom .navbar-brand { font-weight: 700; color: white; }
+        .navbar-custom .navbar-brand i { color: #ffd54f; }
+        
+        .navbar-custom .navbar-nav .nav-link { 
+            color: rgba(255,255,255,0.85) !important; 
+            font-weight: 1000; 
+            font-size: 15px !important;
+            padding-left: 5px !important;
+            padding-right: 5px !important;
+            white-space: nowrap;
+        }
+        .navbar-custom .navbar-nav .nav-link:hover { color: white !important; transform: translateY(-2px); }
+        .navbar-custom .navbar-nav .nav-link i { 
+            margin-right: 3px !important; 
+            font-size: 11.5px !important;
+        }
+
+        .container { margin-top: 3px; }
+        .card { border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: none; overflow: hidden; }
+        .card-header { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 18px 25px; border-bottom: none; }
+        .card-header h4 { margin: 0; font-weight: 600; }
+        .footer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #1e293b; color: #94a3b8; text-align: center;
+            padding: 10px; font-size: 13px; z-index: 999;
+        }
+        .footer a { color: #60a5fa; text-decoration: none; }
+        .footer .society-name { color: #ffd54f; font-weight: 600; }
+        .theme-toggle {
+            cursor: pointer;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+        }
+        .theme-toggle:hover { background: rgba(255,255,255,0.25); }
+        [data-bs-theme="dark"] { --bs-body-bg: #0f172a; --bs-body-color: #e2e8f0; }
+        [data-bs-theme="dark"] .card { background: #1e293b; }
+        [data-bs-theme="dark"] .card-body { background: #1e293b; }
+        [data-bs-theme="dark"] .bg-light { background: #1e293b !important; }
+        [data-bs-theme="dark"] .table { color: #e2e8f0; }
+        [data-bs-theme="dark"] .table-striped tbody tr:nth-of-type(odd) { background: #2d3748; }
+        [data-bs-theme="dark"] .modal-content { background: #1e293b; color: #e2e8f0; }
+        
+        /* મોબાઇલ સ્ક્રીન માટે વધારાનું પ્રોટેક્શન (સાચી જગ્યાએ) */
+        * { box-sizing: border-box; }
+        body { overflow-x: hidden !important; width: 100%; }
+        .container { max-width: 100% !important; overflow-x: hidden; }
+        input.form-control, select.form-select, textarea.form-control { max-width: 100% !important; }
+
+        @media (max-width: 768px) {
+            .navbar-custom .navbar-brand { font-size: 0.9rem; }
+            .container { margin-top: 15px; padding: 0 10px; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-flag me-2"></i> શ્રી કચ્છ કડવા પાટીદાર સત્સંગ સમાજ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if session.get('logged_in') %}
+                    <li class="nav-item"><a class="nav-link" href="/families"><i class="fas fa-users"></i> પરિવાર</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/house-list"><i class="fas fa-house-user"></i> ચૂલા યાદી</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/directory"><i class="fas fa-address-book"></i> ડિરેક્ટરી</a></li>
+                    
+                    <!-- 🩸 બ્લડ ગ્રૂપ ડ્રોપડાઉન -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="bloodGroupDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-tint me-1"></i> બ્લડ ગ્રૂપ
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="bloodGroupDropdown">
+                            <li><a class="dropdown-item" href="/blood-group/A+">A+ Positive</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/A-">A- Negative</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/B+">B+ Positive</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/B-">B- Negative</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/O+">O+ Positive</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/O-">O- Negative</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/AB+">AB+ Positive</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/AB-">AB- Negative</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/ALL">બધા બ્લડ ગ્રૂપ (All)</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item"><a class="nav-link" href="/events"><i class="fas fa-calendar-alt"></i> ઇવેન્ટ્સ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/yuvak"><i class="fas fa-user-graduate"></i> યુવક</a></li>
+                    
+                    <!-- 🔒 આ મેનુઓ ફક્ત Treasurer (એડમિન) ને જ દેખાશે -->
+                    {% if session.get('role') == 'treasurer' %}
+                    <li class="nav-item"><a class="nav-link" href="/yuvak/ledger"><i class="fas fa-book"></i> લેજર</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/manage-users"><i class="fas fa-users-cog"></i> યુઝર મેનેજ</a></li>
+                    {% endif %}
+
+                    <li class="nav-item"><a class="nav-link" href="/birthdays"><i class="fas fa-birthday-cake"></i> જન્મદિવસ</a></li>
+                    <li class="nav-item">
+                        <button class="theme-toggle" onclick="toggleTheme()">
+                            <i class="fas fa-moon" id="themeIcon"></i>
+                        </button>
+                    </li>
+                    
+                    <li class="nav-item"><a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> લૉગઆઉટ</a></li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> લૉગિન</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <span class="society-name">શ્રી કચ્છ કડવા પાટીદાર સત્સંગ સમાજ</span> — © 2026, નડિયાદ | 
+        <a href="https://wa.me/9925152963" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Theme Toggle -->
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-bs-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-bs-theme', newTheme);
+            document.getElementById('themeIcon').className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.setItem('theme', newTheme);
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', saved);
+            document.getElementById('themeIcon').className = saved === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        });
+    </script>
+    
+    <!-- SERVICE WORKER - PWA -->
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/static/service-worker.js')
+            .then(function(registration) {
+                console.log('✅ Service Worker Registered!');
+            })
+            .catch(function(error) {
+                console.log('❌ Service Worker Registration Failed:', error);
+            });
+    }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

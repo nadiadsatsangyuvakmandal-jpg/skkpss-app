@@ -1,0 +1,71 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+            <h3 class="fw-bold mb-3 text-center text-primary">👥 નવો યુઝર ઉમેરો</h3>
+            
+            {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+            {% if success %}
+                <div class="alert alert-success">{{ success }}</div>
+            {% endif %}
+            
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">યુઝરનેમ:</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">પાસવર્ડ:</label>
+                    <input type="password" name="password" class="form-control" required minlength="6">
+                    <small class="text-muted">પાસવર્ડ ઓછામાં ઓછો 6 અક્ષરનો હોવો જોઈએ</small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">પૂરું નામ:</label>
+                    <input type="text" name="full_name" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">રોલ (Role):</label>
+                    <select name="role" class="form-select">
+                        <option value="Super Admin">Super Admin</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Farm Head" selected>Farm Head</option>
+                        <option value="Staff">Staff</option>
+                    </select>
+                </div>
+                <div class="mb-3" id="familySelect">
+                    <label class="form-label fw-bold">કુટુંબ પસંદ કરો (Farm Head માટે):</label>
+                    <select name="family_id" class="form-select">
+                        <option value="">-- કુટુંબ પસંદ કરો --</option>
+                        {% for f in families %}
+                            <option value="{{ f.id }}">{{ f.family_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="text-muted">જો Farm Head હોય તો તેનું કુટુંબ જોડવું ફરજિયાત છે</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100 fw-bold py-2">
+                    <i class="fa-solid fa-floppy-disk"></i> યુઝર સેવ કરો
+                </button>
+                <a href="/users" class="btn btn-outline-secondary w-100 mt-2">
+                    <i class="fa-solid fa-arrow-left"></i> પાછા જાઓ
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelector('select[name="role"]').addEventListener('change', function() {
+    const familySelect = document.getElementById('familySelect');
+    if (this.value === 'Farm Head') {
+        familySelect.style.display = 'block';
+    } else {
+        familySelect.style.display = 'none';
+    }
+});
+document.querySelector('select[name="role"]').dispatchEvent(new Event('change'));
+</script>
+{% endblock %}

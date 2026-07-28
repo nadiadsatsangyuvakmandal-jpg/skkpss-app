@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}ઇવેન્ટ્સ - સમાજ સિસ્ટમ{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+        <h4><i class="fas fa-calendar-alt me-2"></i> ઇવેન્ટ્સ</h4>
+        <div>
+            <a href="/" class="btn btn-secondary me-2">
+                <i class="fas fa-home me-1"></i> હોમ
+            </a>
+            <a href="/event/add" class="btn btn-success">
+                <i class="fas fa-plus me-2"></i> નવી ઇવેન્ટ
+            </a>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th style="min-width:150px;">ઇવેન્ટનું નામ</th>
+                        <th style="width:110px;">તારીખ</th>
+                        <th style="width:110px;">ડેડલાઈન</th>
+                        <th style="width:120px;">પ્રકાર</th>
+                        <th style="width:70px;">એન્ટ્રીઝ</th>
+                        <th style="min-width:350px;">લિંક</th>
+                        <th style="width:150px;">ક્રિયા</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr>
+                        <td class="text-center">{{ loop.index }}</td>
+                        <td><strong>{{ event.name }}</strong></td>
+                        <td class="text-center">{{ event.date }}</td>
+                        <td class="text-center">{{ event.deadline }}</td>
+                        <td class="text-center">
+                            {% if event.type == 'culture' %}
+                                <span class="badge" style="background:#7c3aed; color:white; padding:5px 12px;">🎭 સાંસ્કૃતિક</span>
+                            {% elif event.type == 'saraswati' %}
+                                <span class="badge" style="background:#059669; color:white; padding:5px 12px;">📚 સરસ્વતી</span>
+                            {% elif event.type == 'jamvanu' %}
+                                <span class="badge" style="background:#f59e0b; color:white; padding:5px 12px;">🍽️ જમવાનું</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ event.type }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center"><span class="badge bg-primary">{{ event.total_entries }}</span></td>
+                        <td>
+                            <div class="d-flex gap-1 flex-wrap align-items-center">
+                                <input type="text" id="link_{{ event.id }}" value="{{ event.link }}" 
+                                       class="form-control form-control-sm" style="width:200px;" readonly>
+                                <button class="btn btn-sm btn-primary" onclick="copyLink('{{ event.id }}')" title="કોપી">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <a href="{{ event.link }}" target="_blank" class="btn btn-sm btn-info" title="જુઓ">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="https://wa.me/?text=📢%20RSVP%20ફોર્મ%20ભરો%20👇%0A{{ event.link|urlencode }}" 
+                                   target="_blank" class="btn btn-sm btn-success" title="WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="/event/view/{{ event.id }}" class="btn btn-sm btn-info" title="એન્ટ્રીઝ જુઓ">
+                                    <i class="fas fa-list"></i>
+                                </a>
+                                <a href="/event/{{ event.id }}/export/pdf" class="btn btn-sm btn-danger" title="PDF ડાઉનલોડ">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
+                                <a href="/event/{{ event.id }}/export/excel" class="btn btn-sm" style="background:#0891b2;color:white;" title="Excel ડાઉનલોડ">
+                                    <i class="fas fa-file-excel"></i>
+                                </a>
+                                <a href="/event/edit/{{ event.id }}" class="btn btn-sm btn-warning" title="એડિટ">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="/event/delete/{{ event.id }}" class="btn btn-sm btn-danger" 
+                                   onclick="return confirm('શું તમે આ ઇવેન્ટ કાઢી નાખવા માંગો છો?')" title="કાઢો">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="fas fa-calendar-plus fa-3x d-block mb-3" style="color:#d1d5db;"></i>
+                            <h5>કોઈ ઇવેન્ટ નથી</h5>
+                            <p>હજુ સુધી કોઈ ઇવેન્ટ બનાવવામાં આવી નથી.</p>
+                            <a href="/event/add" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i> પહેલી ઇવેન્ટ બનાવો
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="table-light fw-bold">
+                        <td colspan="7" class="text-end">કુલ ઇવેન્ટ્સ:</td>
+                        <td class="text-center">{{ events|length }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyLink(id) {
+    var input = document.getElementById('link_' + id);
+    input.select();
+    input.setSelectionRange(0, 99999);
+    try {
+        document.execCommand('copy');
+        alert('✅ લિંક કોપી થઈ ગઈ!');
+    } catch(err) {
+        alert('❌ કોપી કરવામાં ભૂલ થઈ.');
+    }
+}
+</script>
+{% endblock %}

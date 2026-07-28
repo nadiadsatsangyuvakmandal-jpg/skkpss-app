@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if member %}સભ્ય વિગત સુધારો{% else %}નવો સભ્ય ઉમેરો{% endif %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light p-4">
+<div class="container bg-white p-4 rounded shadow" style="max-width: 550px; margin-top: 40px;">
+    <h4 class="text-center fw-bold text-dark mb-4">
+        {% if member %}📝 સભ્ય વિગત સુધારો{% else %}👨‍👩‍👧‍👦 નવો સભ્ય ઉમેરો{% endif %}
+    </h4>
+    <hr>
+    
+    <form method="POST">
+        <!-- ૧. સભ્યનું પૂરું નામ -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">સભ્યનું પૂરું નામ:</label>
+            <input type="text" name="name" class="form-control" placeholder="સભ્યનું આખું નામ લખો" value="{% if member %}{{ member[2] }}{% endif %}" required>
+        </div>
+
+        <!-- ૨. સભ્યનો મોબાઈલ નંબર -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">મોબાઈલ નંબર:</label>
+            <input type="tel" name="mobile" class="form-control" placeholder="મોબાઈલ નંબર લખો" value="{% if member %}{{ member[4] if member|length > 4 else '' }}{% endif %}" required>
+        </div>
+
+        <!-- ૩. બિઝનેસ / અભ્યાસ -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">બિઝનેસ / અભ્યાસ (Education / Business):</label>
+            <input type="text" name="education" class="form-control" placeholder="દા.ત. Std 10 / Business" value="{% if member %}{{ member[5] if member|length > 5 else '' }}{% endif %}" required>
+        </div>
+
+        <!-- ૪. જન્મ તારીખ (DD-MM-YYYY ફોર્મેટ) -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">જન્મ તારીખ (DD-MM-YYYY):</label>
+            <input type="text" name="birth_date" class="form-control" placeholder="DD-MM-YYYY" value="{% if member %}{{ member[3] }}{% endif %}" required>
+        </div>
+
+        <!-- ૫. બ્લડ ગ્રૂપ -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">બ્લડ ગ્રૂપ (Blood Group):</label>
+            <select name="blood_group" class="form-select">
+                <option value="">-- બ્લડ ગ્રૂપ પસંદ કરો --</option>
+                <option value="A+" {% if member and member|length > 6 and member[6] == 'A+' %}selected{% endif %}>A+</option>
+                <option value="A-" {% if member and member|length > 6 and member[6] == 'A-' %}selected{% endif %}>A-</option>
+                <option value="B+" {% if member and member|length > 6 and member[6] == 'B+' %}selected{% endif %}>B+</option>
+                <option value="B-" {% if member and member|length > 6 and member[6] == 'B-' %}selected{% endif %}>B-</option>
+                <option value="O+" {% if member and member|length > 6 and member[6] == 'O+' %}selected{% endif %}>O+</option>
+                <option value="O-" {% if member and member|length > 6 and member[6] == 'O-' %}selected{% endif %}>O-</option>
+                <option value="AB+" {% if member and member|length > 6 and member[6] == 'AB+' %}selected{% endif %}>AB+</option>
+                <option value="AB-" {% if member and member|length > 6 and member[6] == 'AB-' %}selected{% endif %}>AB-</option>
+            </select>
+        </div>
+
+        <!-- ૬. ચૂલા નંબર -->
+        <div class="mb-4">
+            <label class="form-label fw-bold">ચૂલા નંબર:</label>
+            <input type="text" name="house_number" class="form-control" placeholder="દા.ત. 1, 2, ઘર-A" value="{% if member %}{{ member[7] if member|length > 7 else '1' }}{% else %}1{% endif %}">
+            <div class="form-text">એક જ ફાર્મ/બિઝનેસમાં અલગ-અલગ ઘર હોય તો અહીં નંબર આપો</div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success fw-bold px-4">💾 સેવ કરો</button>
+            <a href="/family/{{ family_id }}/members" class="btn btn-secondary">પાછા જાઓ</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

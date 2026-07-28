@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>સભ્ય ઉમેરો - પબ્લિક</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', 'Noto Sans Gujarati', sans-serif;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            padding: 40px 35px;
+            max-width: 550px;
+            width: 100%;
+        }
+        .logo-icon {
+            font-size: 52px;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .card-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #065f46;
+        }
+        .card-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .form-control, .form-select {
+            width: 100%;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            padding: 10px 14px;
+            font-size: 15px;
+            background: #fafbfc;
+            font-family: inherit;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #10b981;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+            background: white;
+        }
+        .required-star {
+            color: #dc2626;
+        }
+        .btn-submit {
+            background: #059669;
+            border: none;
+            border-radius: 12px;
+            padding: 13px;
+            font-size: 17px;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover {
+            background: #047857;
+        }
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+        .footer-text {
+            text-align: center;
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 20px;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 16px;
+        }
+        .footer-text span {
+            color: #059669;
+        }
+        .alert {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .alert.show {
+            display: block;
+        }
+        .success-page {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .success-page .icon {
+            font-size: 64px;
+        }
+        .success-page h2 {
+            color: #059669;
+            font-size: 24px;
+            margin: 15px 0 8px;
+        }
+        .success-page p {
+            color: #1e293b;
+            font-size: 16px;
+        }
+        .success-page .sub-text {
+            color: #64748b;
+            font-size: 15px;
+            margin-top: 8px;
+        }
+        .success-page .btn-success {
+            display: inline-block;
+            background: #059669;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+        .success-page .btn-success:hover {
+            background: #047857;
+        }
+
+        /* ===== Inline success banner (stays on same form) ===== */
+        .inline-success {
+            background: #ecfdf5;
+            border: 1.5px solid #34d399;
+            color: #065f46;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .locked-family {
+            background: #f0fdf4;
+            border: 1.5px solid #86efac;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .locked-family .fam-name {
+            font-weight: 700;
+            color: #065f46;
+            font-size: 14px;
+        }
+        .locked-family .change-btn {
+            font-size: 12px;
+            color: #059669;
+            text-decoration: underline;
+            background: none;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .family-search {
+            width: 100%;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            padding: 10px 14px;
+            font-size: 15px;
+            background: #fafbfc;
+            font-family: inherit;
+        }
+        .family-search:focus {
+            border-color: #10b981;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+            background: white;
+        }
+        .family-results {
+            margin-top: 6px;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            max-height: 260px;
+            overflow-y: auto;
+            display: none;
+        }
+        .family-results.show {
+            display: block;
+        }
+        .family-result-item {
+            padding: 12px 14px;
+            font-size: 14.5px;
+            color: #1e293b;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .family-result-item:last-child {
+            border-bottom: none;
+        }
+        .family-result-item:active,
+        .family-result-item.highlighted {
+            background: #ecfdf5;
+        }
+        .family-result-empty {
+            padding: 14px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13.5px;
+        }
+        .family-hint {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        /* ===== WhatsApp Share Button ===== */
+        .whatsapp-share {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #f1f5f9;
+        }
+        .whatsapp-share p {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+        .whatsapp-btn {
+            display: inline-block;
+            background: #25D366;
+            color: white;
+            padding: 10px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .whatsapp-btn:hover {
+            background: #1da851;
+            transform: scale(1.02);
+            color: white;
+        }
+        .whatsapp-btn span {
+            font-size: 18px;
+        }
+        .link-text {
+            color: #94a3b8;
+            font-size: 12px;
+            display: block;
+            margin-top: 5px;
+            word-break: break-all;
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 24px 18px; }
+            .card-title { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        {% if success %}
+        <div class="success-page">
+            <div class="icon">✅</div>
+            <h2>સભ્ય સફળતાપૂર્વક ઉમેરાયો!</h2>
+            <p>સભ્ય ઉમેરાયો.</p>
+            <p class="sub-text">ધન્યવાદ! 🙏</p>
+            <a href="/member/add-public" class="btn-success">➕ બીજો સભ્ય ઉમેરો</a>
+        </div>
+        {% else %}
+        <div class="logo-icon">👤</div>
+        <div class="card-title">નવો સભ્ય ઉમેરો</div>
+        <div class="card-subtitle">કૃપા કરીને તમારી વિગતો નીચે ભરો</div>
+
+        {% if just_added %}
+        <div class="inline-success">✅ સભ્ય ઉમેરાયો! હવે એ જ પરિવારમાં બીજો સભ્ય ઉમેરી શકો છો.</div>
+        {% endif %}
+
+        <div id="errorAlert" class="alert">કૃપા કરીને બધી જરૂરી વિગતો ભરો.</div>
+
+        <form method="POST" action="/member/add-public" onsubmit="return validateForm()">
+            <div class="form-group" id="familySearchGroup" {% if selected_family_id %}style="display:none;"{% endif %}>
+                <label class="form-label" for="familySearch">પરિવાર પસંદ કરો <span class="required-star">*</span></label>
+                <input type="text" id="familySearch" class="family-search" placeholder="🔍 ફાર્મ અથવા પરિવારના નામથી ટાઈપ કરો..." oninput="showResults()" onfocus="showResults()" autocomplete="off">
+                <div class="family-hint">ટાઈપ કરો અને યાદીમાંથી પરિવાર પર ટચ કરો</div>
+                <div class="family-results" id="familyResults"></div>
+                <input type="hidden" name="family_id" id="family_id" value="{{ selected_family_id }}" required>
+            </div>
+
+            {% if selected_family_id %}
+            <div class="locked-family" id="lockedFamilyBox">
+                <span class="fam-name">👨‍👩‍👧‍👦 {{ selected_family_label }}</span>
+                <button type="button" class="change-btn" onclick="unlockFamily()">બદલો</button>
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="form-label" for="name">સભ્યનું નામ <span class="required-star">*</span></label>
+                <input type="text" name="name" id="name" class="form-control" placeholder="દા.ત. રમેશભાઈ પટેલ" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="mobile">મોબાઈલ નંબર</label>
+                <input type="tel" name="mobile" id="mobile" class="form-control" placeholder="દા.ત. 98765 43210">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="business_study">વ્યવસાય / અભ્યાસ</label>
+                <input type="text" name="business_study" id="business_study" class="form-control" placeholder="દા.ત. ડોક્ટર, એન્જિનિયર">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="birth_date">જન્મ તારીખ</label>
+                <input type="date" name="birth_date" id="birth_date" class="form-control">
+            </div>
+            <div class="form-group">
+    <label class="form-label" for="blood_group">બ્લડ ગ્રૂપ (Blood Group)</label>
+    <select name="blood_group" id="blood_group" class="form-select">
+        <option value="">-- બ્લડ ગ્રૂપ પસંદ કરો --</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+    </select>
+</div>
+
+            <div class="form-group">
+                <label class="form-label" for="house_number">ચૂલા નંબર</label>
+                <input type="text" name="house_number" id="house_number" class="form-control" placeholder="દા.ત. 1, 2" value="1">
+                <div class="family-hint">જો તમારો પરિવાર (ફાર્મ) એક કરતાં વધારે ચૂલામાં વહેંચાયેલો હોય, તો સાચો ચૂલા નંબર લખો. ખાતરી ના હોય તો "1" જ રહેવા દો.</div>
+            </div>
+
+            <button type="submit" class="btn-submit">➕ સભ્ય ઉમેરો</button>
+        </form>
+
+        <!-- ============================================================ -->
+        <!-- ⭐ WhatsApp Share Button -->
+        <!-- ============================================================ -->
+        <div class="whatsapp-share">
+            <p>📱 આ લિંક અન્ય લોકો સાથે શેર કરો:</p>
+            <a href="https://wa.me/?text=🙏%20નમસ્તે!%0A%0A📝%20શ્રી%20કચ્છ%20કડવા%20પાટીદાર%20સત્સંગ%20સમાજ%20માં%20નવો%20સભ્ય%20ઉમેરવા%20માટે%20નીચેની%20લિંક%20ખોલો:%0A%0A🔗%20https://satsangyuvakmandal.pythonanywhere.com/member/add-public%0A%0Aધન્યવાદ!%20🙏" 
+               target="_blank" 
+               class="whatsapp-btn">
+                <span>📱</span> WhatsApp પર શેર કરો
+            </a>
+            <span class="link-text">🔗 લિંક: https://satsangyuvakmandal.pythonanywhere.com/member/add-public</span>
+        </div>
+
+        <div class="footer-text">
+            🏛️ <span>શ્રી કચ્છ કડવા પાટીદાર સત્સંગ સમાજ</span> • નડિયાદ
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        var allFamilies = {{ families_for_js|tojson }};
+
+        function validateForm() {
+            var family = document.getElementById('family_id').value;
+            var name = document.getElementById('name').value.trim();
+            var alert = document.getElementById('errorAlert');
+            
+            if (!family) {
+                alert.textContent = 'કૃપા કરીને પરિવાર પસંદ કરો.';
+                alert.classList.add('show');
+                return false;
+            }
+            
+            if (!name) {
+                alert.textContent = 'કૃપા કરીને સભ્યનું નામ લખો.';
+                alert.classList.add('show');
+                return false;
+            }
+            
+            alert.classList.remove('show');
+            return true;
+        }
+
+        function showResults() {
+            var query = document.getElementById('familySearch').value.trim().toLowerCase();
+            var resultsBox = document.getElementById('familyResults');
+
+            var matches = allFamilies.filter(function(f) {
+                return query === '' || f.label.toLowerCase().indexOf(query) !== -1;
+            }).slice(0, 30);
+
+            resultsBox.innerHTML = '';
+            if (matches.length === 0) {
+                var empty = document.createElement('div');
+                empty.className = 'family-result-empty';
+                empty.textContent = 'કોઈ પરિવાર મળ્યો નથી';
+                resultsBox.appendChild(empty);
+            } else {
+                matches.forEach(function(f) {
+                    var item = document.createElement('div');
+                    item.className = 'family-result-item';
+                    item.textContent = '👨\u200d👩\u200d👧\u200d👦 ' + f.label;
+                    item.dataset.id = f.id;
+                    item.dataset.label = f.label;
+                    item.addEventListener('click', function() {
+                        pickFamily(item.dataset.id, item.dataset.label);
+                    });
+                    resultsBox.appendChild(item);
+                });
+            }
+            resultsBox.classList.add('show');
+        }
+
+        function pickFamily(id, label) {
+            document.getElementById('family_id').value = id;
+            document.getElementById('familySearchGroup').style.display = 'none';
+
+            var existingBox = document.getElementById('lockedFamilyBox');
+            if (existingBox) existingBox.remove();
+
+            var box = document.createElement('div');
+            box.className = 'locked-family';
+            box.id = 'lockedFamilyBox';
+
+            var nameSpan = document.createElement('span');
+            nameSpan.className = 'fam-name';
+            nameSpan.textContent = '👨\u200d👩\u200d👧\u200d👦 ' + label;
+
+            var changeBtn = document.createElement('button');
+            changeBtn.type = 'button';
+            changeBtn.className = 'change-btn';
+            changeBtn.textContent = 'બદલો';
+            changeBtn.addEventListener('click', unlockFamily);
+
+            box.appendChild(nameSpan);
+            box.appendChild(changeBtn);
+            document.getElementById('familySearchGroup').insertAdjacentElement('afterend', box);
+
+            document.getElementById('name').focus();
+        }
+
+        function unlockFamily() {
+            var box = document.getElementById('lockedFamilyBox');
+            if (box) box.remove();
+            document.getElementById('familySearchGroup').style.display = '';
+            document.getElementById('family_id').value = '';
+            document.getElementById('familySearch').value = '';
+            document.getElementById('familyResults').classList.remove('show');
+            document.getElementById('familySearch').focus();
+        }
+
+        // Close the results list when tapping outside of it
+        document.addEventListener('click', function(e) {
+            var wrap = document.getElementById('familySearchGroup');
+            var results = document.getElementById('familyResults');
+            if (wrap && results && !wrap.contains(e.target)) {
+                results.classList.remove('show');
+            }
+        });
+
+        // If a family was already selected (e.g. right after adding a member),
+        // move focus straight to the name field so the next member can be typed immediately.
+        window.addEventListener('DOMContentLoaded', function() {
+            var nameField = document.getElementById('name');
+            var lockedBox = document.getElementById('lockedFamilyBox');
+            if (lockedBox && nameField) {
+                nameField.focus();
+            }
+        });
+    </script>
+</body>
+</html>

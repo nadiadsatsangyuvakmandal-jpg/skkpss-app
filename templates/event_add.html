@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{% if event %}ઇવેન્ટ એડિટ{% else %}નવી ઇવેન્ટ{% endif %}{% endblock %}
+
+{% block content %}
+<div class="card mx-auto" style="max-width:600px;">
+    <div class="card-header">
+        <h4><i class="fas fa-{% if event %}edit{% else %}plus{% endif %} me-2"></i> 
+            {% if event %}ઇવેન્ટ એડિટ કરો{% else %}નવી ઇવેન્ટ{% endif %}
+        </h4>
+    </div>
+    <div class="card-body p-4">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-tag me-2"></i> ઇવેન્ટનું નામ *</label>
+                <input type="text" name="event_name" class="form-control" 
+                       value="{% if event %}{{ event[1] }}{% endif %}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-calendar-day me-2"></i> તારીખ *</label>
+                <input type="date" name="event_date" class="form-control" 
+                       value="{% if event %}{{ event[2] }}{% endif %}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-hourglass-end me-2"></i> ડેડલાઈન તારીખ</label>
+                <input type="date" name="deadline_date" class="form-control" 
+                       value="{% if event %}{{ event[3] }}{% endif %}">
+                <div class="form-text">આ તારીખ પછી RSVP ફોર્મ બંધ થઈ જશે.</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-tag me-2"></i> ઇવેન્ટનો પ્રકાર *</label>
+                <select name="event_type" class="form-select" required>
+                    <option value="culture" {% if event and event[4]=='culture' %}selected{% endif %}>
+                        🎭 સાંસ્કૃતિક (Culture)
+                    </option>
+                    <option value="saraswati" {% if event and event[4]=='saraswati' %}selected{% endif %}>
+                        📚 સરસ્વતી (Saraswati)
+                    </option>
+                    <option value="jamvanu" {% if event and event[4]=='jamvanu' %}selected{% endif %}>
+                        🍽️ જમવાનું (Jamvanu)
+                    </option>
+                </select>
+                <div class="form-text">આના આધારે RSVP ફોર્મમાં અલગ ફિલ્ડ્સ દેખાશે.</div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-save me-2"></i> {% if event %}અપડેટ કરો{% else %}ઇવેન્ટ બનાવો{% endif %}
+            </button>
+        </form>
+        <div class="mt-3">
+            <a href="/events" class="btn btn-secondary w-100"><i class="fas fa-arrow-left me-2"></i> પાછા</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

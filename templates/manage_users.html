@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block title %}યુઝર મેનેજ કરો - સમાજ સિસ્ટમ{% endblock %}
+
+{% block content %}
+<style>
+    * { box-sizing: border-box; }
+
+    .info-box {
+        background: #eff6ff; border: 1.5px solid #93c5fd; color: #1e3a8a;
+        border-radius: 10px; padding: 12px 14px; font-size: 13px; margin-bottom: 16px;
+        line-height: 1.6;
+    }
+    .add-user-form {
+        background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+        padding: 16px; margin-bottom: 18px;
+    }
+    .add-user-form h5 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #1e293b; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .form-row input, .form-row select {
+        border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; font-size: 14px;
+    }
+    .btn-add-user {
+        width: 100%; background: #059669; color: white; border: none; border-radius: 8px;
+        padding: 10px; font-weight: 700; font-size: 14px;
+    }
+    .error-note { color: #dc2626; font-size: 12.5px; margin-bottom: 10px; font-weight: 600; }
+
+    .user-row {
+        background: white; border: 1px solid #e2e8f0; border-radius: 10px;
+        padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .user-row .uname { font-weight: 700; color: #1e293b; }
+    .role-badge {
+        font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-left: 8px;
+    }
+    .role-badge.treasurer { background: #ede9fe; color: #5b21b6; }
+    .role-badge.committee { background: #e0f2fe; color: #0369a1; }
+    
+    /* આ નવો ક્લાસ અહીં ઉમેરી દેવાનો છે */
+    .role-badge.farm_head { background: #dcfce7; color: #166534; }
+    .btn-del-user {
+        background: #fee2e2; color: #dc2626; border: none; border-radius: 8px;
+        padding: 6px 12px; font-size: 12px; font-weight: 700;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0"><i class="fas fa-users-cog me-2"></i> યુઝર મેનેજ કરો</h4>
+    </div>
+    <div class="card-body">
+
+        <div class="info-box">
+            💡 <strong>ખજાનચી (Treasurer)</strong>: માસિક કલેક્શન અને યુવક લેજરમાં એડિટ કરી શકે.<br>
+            👁️ <strong>કમિટી (Committee)</strong> — મંત્રી, પ્રમુખ, યુવક મંડળ પ્રમુખ/મંત્રી વગેરે: બધું જોઈ શકે પણ માસિક કલેક્શન અને યુવક લેજરમાં એડિટ ના કરી શકે.
+        </div>
+
+        <div class="add-user-form">
+            <h5>➕ નવો યુઝર ઉમેરો</h5>
+            {% if error_msg %}<div class="error-note">{{ error_msg }}</div>{% endif %}
+            <form method="POST">
+                <input type="hidden" name="action" value="add">
+                <div class="form-row">
+                    <input type="text" name="username" placeholder="યુઝરનેમ" required>
+                    <input type="text" name="password" placeholder="પાસવર્ડ" required>
+                </div>
+                
+                <div class="form-row" style="grid-template-columns: 1fr;">
+                    <select name="role" id="roleSelect" onchange="toggleFamilySelect(this)">
+                        <option value="committee">કમિટી (ફક્ત જોવા માટે — મંત્રી/પ્રમુખ)</option>
+                        <option value="treasurer">ખજાનચી (સંપૂર્ણ એડિટ પરવાનગી)</option>
+                        <option value="farm_head">ફાર્મ હેડ (ડિરેક્ટરી વ્યુ અને માત્ર પોતાનું ફાર્મ એડિટ)</option>
+                    </select>
+                </div>
+
+                <!-- ફાર્મ હેડ પસંદ કરવા પર જ આ પરિવારનું ડ્રોપડાઉન દેખાશે -->
+                <div class="form-row" id="familySelectRow" style="grid-template-columns: 1fr; display: none; margin-bottom: 10px;">
+                    <input type="text" id="famSearchBox" placeholder="🔍 અહીં પરિવારનું નામ લખીને ફિલ્ટર કરો..." class="form-control mb-2" style="border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; font-size: 14px;">
+                    <select name="family_id" id="realFamilySelect" class="form-select" style="border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 8px 10px;">
+                        <option value="">-- સંબંધિત પરિવાર પસંદ કરો --</option>
+                        {% for fam in all_families %}
+                            <option value="{{ fam[0] }}">{{ fam[1] }} {% if fam[2] %}({{ fam[2] }}){% endif %}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-add-user">યુઝર ઉમેરો</button>
+            </form>
+        </div>
+
+        <h5 style="font-size:14px; font-weight:700; color:#1e293b; margin-bottom:10px;">હાલના યુઝર્સ</h5>
+        {% for u in users %}
+        <div class="user-row">
+            <div>
+                <span class="uname">{{ u[1] }}</span>
+                <span class="role-badge {{ u[2] }}">
+                    {% if u[2] == 'treasurer' %}ખજાનચી
+                    {% elif u[2] == 'farm_head' %}ફાર્મ હેડ
+                    {% else %}કમિટી{% endif %}
+                </span>
+            </div>
+            {% if u[1] != current_username %}
+            <form method="POST" onsubmit="return confirm('આ યુઝર કાઢી નાખવો છે?')">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="user_id" value="{{ u[0] }}">
+                <button type="submit" class="btn-del-user">🗑️ કાઢો</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+<script>
+function toggleFamilySelect(selectObj) {
+    const famRow = document.getElementById('familySelectRow');
+    if (selectObj.value === 'farm_head') {
+        famRow.style.display = 'block';
+    } else {
+        famRow.style.display = 'none';
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const roleSelect = document.getElementById('roleSelect');
+    if (roleSelect) {
+        toggleFamilySelect(roleSelect);
+    }
+
+    // પરફેક્ટ લાઈવ સર્ચ ફિલ્ટર લોજિક
+    const searchBox = document.getElementById('famSearchBox');
+    const familySelect = document.getElementById('realFamilySelect');
+    
+    if (searchBox && familySelect) {
+        // બધી ઓરિજિનલ ઓપ્શન્સને સેવ કરી રાખો
+        const allOptions = Array.from(familySelect.options);
+        
+        searchBox.addEventListener('input', function() {
+            const filter = this.value.toLowerCase().trim();
+            
+            // ડ્રોપડાઉન ખાલી કરો
+            familySelect.innerHTML = '';
+            
+            // જે નામ મેચ થાય અથવા ખાલી ઓપ્શન હોય તેને જ ઉમેરો
+            allOptions.forEach(option => {
+                const text = option.text.toLowerCase();
+                if (option.value === "" || text.includes(filter)) {
+                    familySelect.appendChild(option);
+                }
+            });
+            
+            // જો ફિલ્ટર કરતી વખતે પહેલું ઓપ્શન સિલેક્ટ થઈ ગયું હોય તો ઓટોમેટિક ખુલ્લું દેખાય
+            familySelect.size = filter.length > 0 ? Math.min(familySelect.options.length, 6) : 1;
+        });
+
+        // જ્યારે ડ્રોપડાઉનમાંથી સિલેક્ટ કરીએ ત્યારે સાઇઝ પાછી નોર્મલ કરી દો
+        familySelect.addEventListener('change', function() {
+            familySelect.size = 1;
+        });
+    }
+});
+</script>
+{% endblock %}

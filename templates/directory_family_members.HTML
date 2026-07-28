@@ -1,0 +1,22 @@
+@app.route("/directory/family/<int:family_id>/members")
+def directory_family_members(family_id):
+    if not session.get("logged_in"):
+        return redirect("/login")
+    
+    conn = sqlite3.connect("samaj.db")
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT firm_name, family_name, address FROM families WHERE id = ?", (family_id,))
+    family_info = cursor.fetchone()
+    
+    # અહીં blood_group અને house_number નો સાચો ક્રમ ગોઠવેલ છે
+    cursor.execute("""
+        SELECT name, mobile, birth_date, business_study, house_number, blood_group 
+        FROM family_members 
+        WHERE family_id = ?
+        ORDER BY house_number ASC
+    """, (family_id,))
+    members = cursor.fetchall()
+    conn.close()
+    
+    return render_template("directory_members.html", family_info=family_info, members=members)
