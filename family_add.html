@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="card p-4 shadow-sm mx-auto" style="max-width: 500px;">
+    <h4 class="mb-4 text-secondary text-center">{% if family %}વિગત સુધારો (Edit){% else %}નવો પરિવાર ઉમેરો{% endif %}</h4>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label"><strong>ફર્મ / પેઢીનું નામ:</strong></label>
+            <input type="text" name="firm_name" class="form-control" value="{% if family %}{{ family[1] }}{% endif %}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>પરિવારનું નામ / મુખ્ય વ્યક્તિનું નામ:</strong></label>
+            <input type="text" name="family_name" class="form-control" value="{% if family %}{{ family[2] }}{% endif %}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>મોબાઈલ નંબર:</strong></label>
+            <input type="text" name="mobile" class="form-control" value="{% if family %}{{ family[3] }}{% endif %}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>સરનામું:</strong></label>
+            <textarea name="address" class="form-control" rows="3" required>{% if family %}{{ family[4] }}{% endif %}</textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>UIF (ગયા વર્ષની બાકી રકમ):</strong></label>
+            <input type="number" name="uif" class="form-control" value="{% if family %}{{ family[5]|int }}{% else %}0{% endif %}">
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success flex-grow-1">સેવ કરો</button>
+            <a href="/families" class="btn btn-secondary">પાછા જાઓ</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

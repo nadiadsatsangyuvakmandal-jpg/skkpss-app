@@ -1,0 +1,535 @@
+{% extends "base.html" %}
+{% block title %}યુવક લેજર - સમાજ સિસ્ટમ{% endblock %}
+
+{% block content %}
+<style>
+    * { box-sizing: border-box; }
+
+    .ledger-card {
+        border-radius: 14px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        border: none;
+        overflow: hidden;
+    }
+    .ledger-card .card-header {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white;
+        padding: 16px 20px;
+        border-bottom: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .ledger-card .card-header h4 { margin: 0; font-weight: 700; font-size: 17px; }
+    .ledger-card .card-header h4 i { color: #ffd54f; }
+    .ledger-card .card-body { padding: 16px; background: #f8fafc; }
+
+    /* ===== SUMMARY CARDS ===== */
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+    .summary-card {
+        background: white;
+        border-radius: 12px;
+        padding: 12px 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #e2e8f0;
+        text-align: center;
+        min-width: 0;
+    }
+    .summary-card .icon { font-size: 20px; display: block; margin-bottom: 4px; }
+    .summary-card .label {
+        font-size: 10.5px; color: #64748b; font-weight: 700;
+        text-transform: uppercase; white-space: nowrap;
+        overflow: hidden; text-overflow: ellipsis;
+    }
+    .summary-card .amount {
+        font-size: 15px; font-weight: 800; margin-top: 4px;
+        word-break: break-word; line-height: 1.2;
+    }
+    .summary-card .amount.income { color: #059669; }
+    .summary-card .amount.expense { color: #dc2626; }
+    .summary-card .amount.balance.positive { color: #059669; }
+    .summary-card .amount.balance.negative { color: #dc2626; }
+    .summary-card.income-card { border-top: 4px solid #059669; }
+    .summary-card.expense-card { border-top: 4px solid #dc2626; }
+    .summary-card.balance-card {
+        border-top: 4px solid #3b82f6;
+        background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    }
+    @media (min-width: 480px) {
+        .summary-card { padding: 16px 14px; }
+        .summary-card .icon { font-size: 26px; }
+        .summary-card .label { font-size: 12px; }
+        .summary-card .amount { font-size: 20px; }
+    }
+
+    /* ===== EXPORT BUTTONS ===== */
+    .export-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .export-btns .btn {
+        border-radius: 10px; font-weight: 600; padding: 6px 14px; font-size: 12.5px;
+    }
+
+    /* ===== ADD FORM (TABBED) ===== */
+    .add-form-wrap {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        overflow: hidden;
+    }
+    .add-tabs { display: grid; grid-template-columns: 1fr 1fr; }
+    .add-tab-btn {
+        border: none;
+        padding: 13px 10px;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        background: #f1f5f9;
+        color: #64748b;
+        transition: all 0.2s;
+    }
+    .add-tab-btn i { margin-right: 6px; }
+    .add-tab-btn.active[data-tab="income"] { background: #059669; color: white; }
+    .add-tab-btn.active[data-tab="expense"] { background: #dc2626; color: white; }
+
+    .add-form-body { padding: 16px; }
+    .add-form-panel { display: none; }
+    .add-form-panel.active { display: block; }
+
+    .form-row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-full { grid-column: 1 / -1; }
+    .form-label {
+        font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; display: block;
+    }
+    .add-form-panel .form-control, .add-form-panel .form-select {
+        border-radius: 10px; border: 2px solid #e2e8f0; padding: 9px 12px;
+        font-size: 14px; background: #fafcff; width: 100%;
+    }
+    .add-form-panel .form-control:focus, .add-form-panel .form-select:focus {
+        border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
+        background: white; outline: none;
+    }
+    .btn-add-income, .btn-add-expense {
+        border: none; border-radius: 10px; padding: 11px 20px; font-weight: 700;
+        font-size: 14px; width: 100%; color: white; cursor: pointer;
+    }
+    .btn-add-income { background: #059669; }
+    .btn-add-income:hover { background: #047857; }
+    .btn-add-expense { background: #dc2626; }
+    .btn-add-expense:hover { background: #b91c1c; }
+
+    @media (max-width: 480px) {
+        .form-row-2col { grid-template-columns: 1fr; }
+    }
+
+    /* ===== EDIT FORM ===== */
+    .edit-form {
+        background: #fef3c7; border-radius: 12px; padding: 16px;
+        border: 2px solid #f59e0b; margin-bottom: 14px;
+    }
+    .edit-form .form-title {
+        font-size: 15px; font-weight: 700; color: #92400e;
+        display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+    }
+    .edit-form .form-title i { color: #f59e0b; }
+    .btn-edit-save {
+        background: #f59e0b; color: white; border: none; border-radius: 10px;
+        padding: 10px 20px; font-weight: 700; font-size: 14px; width: 100%; cursor: pointer;
+    }
+    .btn-edit-save:hover { background: #d97706; }
+    .btn-cancel {
+        background: #e2e8f0; color: #475569; border: none; border-radius: 10px;
+        padding: 10px 16px; font-weight: 700; font-size: 14px;
+        text-decoration: none; display: inline-block; text-align: center; width: 100%;
+    }
+    .btn-cancel:hover { background: #cbd5e1; color: #1e293b; }
+    .edit-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* ===== FILTER TABS ===== */
+    .filter-tabs {
+        display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto;
+    }
+    .filter-tab {
+        border: 1px solid #e2e8f0; background: white; color: #475569;
+        padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+        cursor: pointer; white-space: nowrap; transition: all 0.2s;
+    }
+    .filter-tab.active { background: #1e3a8a; color: white; border-color: #1e3a8a; }
+
+    /* ===== DATE/EVENT FILTER BAR ===== */
+    .ledger-filter-bar {
+        background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+        padding: 12px 14px; margin-bottom: 12px;
+    }
+    .filter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .filter-field label { font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 3px; }
+    .filter-field input, .filter-field select {
+        width: 100%; border: 1.5px solid #e2e8f0; border-radius: 8px;
+        padding: 7px 9px; font-size: 13px;
+    }
+    .filter-field input:focus, .filter-field select:focus {
+        outline: none; border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+    }
+    .filter-actions { display: flex; gap: 8px; align-items: center; }
+    .filter-actions button {
+        background: #7c3aed; color: white; border: none; border-radius: 8px;
+        padding: 8px 16px; font-size: 13px; font-weight: 700; flex: 1;
+    }
+    .filter-actions a {
+        color: #64748b; font-size: 12.5px; text-decoration: underline; white-space: nowrap;
+    }
+    .active-filter-note {
+        background: #ede9fe; border: 1px solid #c4b5fd; color: #5b21b6;
+        border-radius: 8px; padding: 8px 12px; font-size: 12.5px; font-weight: 600;
+        margin-bottom: 12px;
+    }
+    .event-chip {
+        display: inline-block; background: #ede9fe; color: #5b21b6;
+        border-radius: 10px; padding: 1px 8px; font-size: 10.5px; font-weight: 700;
+        margin-left: 4px;
+    }
+
+    /* ===== TRANSACTION LIST (mobile-first, single column) ===== */
+    .txn-list { display: flex; flex-direction: column; gap: 8px; }
+    .txn-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #cbd5e1;
+        padding: 12px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    }
+    .txn-card.txn-income { border-left-color: #059669; }
+    .txn-card.txn-expense { border-left-color: #dc2626; }
+
+    .txn-left { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+    .txn-icon {
+        width: 34px; height: 34px; min-width: 34px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 14px; color: white;
+    }
+    .txn-income .txn-icon { background: #059669; }
+    .txn-expense .txn-icon { background: #dc2626; }
+
+    .txn-info { min-width: 0; }
+    .txn-desc {
+        font-size: 14px; font-weight: 700; color: #1e293b;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .txn-meta {
+        font-size: 11.5px; color: #94a3b8; margin-top: 2px;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    .txn-right { text-align: right; flex-shrink: 0; }
+    .txn-amount { font-size: 15px; font-weight: 800; white-space: nowrap; }
+    .txn-income .txn-amount { color: #059669; }
+    .txn-expense .txn-amount { color: #dc2626; }
+    .txn-actions { display: flex; gap: 6px; margin-top: 4px; justify-content: flex-end; }
+    .btn-action {
+        width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+        border-radius: 6px; font-size: 11px; border: none; text-decoration: none;
+    }
+    .btn-action-edit { background: #fef3c7; color: #d97706; }
+    .btn-action-delete { background: #fee2e2; color: #dc2626; }
+    .view-only-note {
+        background: #f1f5f9; border: 1.5px dashed #cbd5e1; color: #64748b;
+        border-radius: 10px; padding: 10px 14px; font-size: 12.5px; font-weight: 600;
+        text-align: center; margin-bottom: 14px;
+    }
+
+    .txn-empty {
+        text-align: center; padding: 40px 20px; color: #94a3b8;
+        background: white; border-radius: 12px; border: 1px dashed #e2e8f0;
+    }
+    .txn-empty i { font-size: 32px; display: block; margin-bottom: 10px; color: #cbd5e1; }
+</style>
+
+<div class="ledger-card card">
+    <!-- HEADER -->
+    <div class="card-header">
+        <h4><i class="fas fa-book me-2"></i> યુવક લેજર</h4>
+        <div class="export-btns">
+            <a href="/yuvak/ledger/export/pdf?date_from={{ filter_date_from|urlencode }}&date_to={{ filter_date_to|urlencode }}&event_tag={{ filter_event|urlencode }}" class="btn btn-danger">
+                <i class="fas fa-file-pdf me-1"></i> PDF
+            </a>
+            <a href="/yuvak/ledger/export/excel?date_from={{ filter_date_from|urlencode }}&date_to={{ filter_date_to|urlencode }}&event_tag={{ filter_event|urlencode }}" class="btn btn-info text-white">
+                <i class="fas fa-file-excel me-1"></i> Excel
+            </a>
+        </div>
+    </div>
+
+    <div class="card-body">
+
+        <!-- ===== SUMMARY CARDS ===== -->
+        <div class="summary-grid">
+            <div class="summary-card income-card">
+                <span class="icon">📈</span>
+                <div class="label">કુલ આવક</div>
+                <div class="amount income">₹{{ income|inr_amt }}</div>
+            </div>
+            <div class="summary-card expense-card">
+                <span class="icon">📉</span>
+                <div class="label">કુલ જાવક</div>
+                <div class="amount expense">₹{{ expense|inr_amt }}</div>
+            </div>
+            <div class="summary-card balance-card">
+                <span class="icon">💰</span>
+                <div class="label">બાકી રકમ</div>
+                <div class="amount balance {% if balance >= 0 %}positive{% else %}negative{% endif %}">
+                    {% if balance >= 0 %}₹{{ balance|inr_amt }}{% else %}-₹{{ (balance * -1)|inr_amt }}{% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if user_is_treasurer %}
+        <!-- INCOME FORM -->
+<div class="add-form">
+    <div class="form-title income-title">
+        <i class="fas fa-plus-circle"></i> 📈 આવક ઉમેરો
+    </div>
+    <form method="POST" class="form-row-2col">
+        <input type="hidden" name="entry_type" value="income">
+        <div>
+            <label class="form-label">તારીખ</label>
+            <input type="date" name="entry_date" class="form-control" required>
+        </div>
+        <div>
+            <label class="form-label">દાતાનું નામ</label>
+            <input type="text" name="donor_name" class="form-control" placeholder="દાતાનું નામ" required>
+        </div>
+        <div>
+            <label class="form-label">વિગત</label>
+            <input type="text" name="description" class="form-control" placeholder="વિગત લખો" required>
+        </div>
+        <div>
+            <label class="form-label">પ્રસંગ / ઇવેન્ટ</label>
+            <input type="text" name="event_tag" class="form-control" list="eventTagList" placeholder="દા.ત. જન્માષ્ટમી, નવરાત્રી" value="સામાન્ય">
+        </div>
+        <div>
+            <label class="form-label">રકમ (₹)</label>
+            <input type="number" step="0.01" name="amount" class="form-control" placeholder="0.00" required>
+        </div>
+        <div style="grid-column: 1 / -1;">
+            <button type="submit" class="btn-add-income">
+                <i class="fas fa-plus"></i> આવક ઉમેરો
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- EXPENSE FORM -->
+<div class="add-form">
+    <div class="form-title expense-title">
+        <i class="fas fa-plus-circle"></i> 📉 જાવક ઉમેરો
+    </div>
+    <form method="POST" class="form-row-2col">
+        <input type="hidden" name="entry_type" value="expense">
+        <div>
+            <label class="form-label">તારીખ</label>
+            <input type="date" name="entry_date" class="form-control" required>
+        </div>
+        <div>
+            <label class="form-label">દાતાનું નામ</label>
+            <input type="text" name="donor_name" class="form-control" placeholder="દાતાનું નામ" required>
+        </div>
+        <div>
+            <label class="form-label">વિગત</label>
+            <input type="text" name="description" class="form-control" placeholder="વિગત લખો" required>
+        </div>
+        <div>
+            <label class="form-label">પ્રસંગ / ઇવેન્ટ</label>
+            <input type="text" name="event_tag" class="form-control" list="eventTagList" placeholder="દા.ત. જન્માષ્ટમી, નવરાત્રી" value="સામાન્ય">
+        </div>
+        <div>
+            <label class="form-label">રકમ (₹)</label>
+            <input type="number" step="0.01" name="amount" class="form-control" placeholder="0.00" required>
+        </div>
+        <div style="grid-column: 1 / -1;">
+            <button type="submit" class="btn-add-expense">
+                <i class="fas fa-plus"></i> જાવક ઉમેરો
+            </button>
+        </div>
+    </form>
+</div>
+        {% else %}
+        <div class="view-only-note">
+            👁️ તમે ફક્ત જોઈ શકો છો — નવી એન્ટ્રી ઉમેરવા/બદલવાની પરવાનગી ફક્ત ખજાનચી પાસે છે.
+        </div>
+        {% endif %}
+
+<datalist id="eventTagList">
+    <option value="સામાન્ય">
+    {% for tag in all_event_tags %}
+    <option value="{{ tag }}">
+    {% endfor %}
+</datalist>
+
+        <!-- ===== EDIT ENTRY FORM ===== -->
+        {% if edit_entry %}
+        <div class="edit-form">
+            <div class="form-title">
+                <i class="fas fa-edit"></i> એન્ટ્રી એડિટ કરો
+                <span style="font-size:12px; font-weight:400; color:#78350f;">(ID: {{ edit_entry.id }})</span>
+            </div>
+            <form method="POST" action="/yuvak/ledger/edit/{{ edit_entry.id }}">
+                <div class="form-row-2col" style="margin-bottom:12px;">
+                    <div>
+                        <label class="form-label" style="color:#78350f;">તારીખ</label>
+                        <input type="date" name="entry_date" class="form-control" value="{{ edit_entry.date }}" required>
+                    </div>
+                    <div>
+                        <label class="form-label" style="color:#78350f;">પ્રકાર</label>
+                        <select name="entry_type" class="form-select" required>
+                            <option value="income" {% if edit_entry.type=='income' %}selected{% endif %}>આવક</option>
+                            <option value="expense" {% if edit_entry.type=='expense' %}selected{% endif %}>જાવક</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" style="color:#78350f;">દાતાનું નામ</label>
+                        <input type="text" name="donor_name" class="form-control" value="{{ edit_entry.donor_name }}" placeholder="દાતાનું નામ">
+                    </div>
+                    <div>
+                        <label class="form-label" style="color:#78350f;">રકમ (₹)</label>
+                        <input type="number" step="0.01" name="amount" class="form-control" value="{{ edit_entry.amount }}" required>
+                    </div>
+                    <div class="field-full">
+                        <label class="form-label" style="color:#78350f;">વિગત</label>
+                        <input type="text" name="description" class="form-control" value="{{ edit_entry.desc }}" placeholder="વિગત" required>
+                    </div>
+                    <div class="field-full">
+                        <label class="form-label" style="color:#78350f;">પ્રસંગ / ઇવેન્ટ</label>
+                        <input type="text" name="event_tag" class="form-control" list="eventTagList" value="{{ edit_entry.event_tag }}">
+                    </div>
+                </div>
+                <div class="edit-actions">
+                    <button type="submit" class="btn-edit-save">
+                        <i class="fas fa-save"></i> અપડેટ કરો
+                    </button>
+                    <a href="/yuvak/ledger" class="btn-cancel">
+                        <i class="fas fa-times me-1"></i> રદ કરો
+                    </a>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- ===== DATE + EVENT FILTER (server-side) ===== -->
+        <form method="GET" class="ledger-filter-bar">
+            <div class="filter-row">
+                <div class="filter-field">
+                    <label>તારીખથી</label>
+                    <input type="date" name="date_from" value="{{ filter_date_from }}">
+                </div>
+                <div class="filter-field">
+                    <label>તારીખ સુધી</label>
+                    <input type="date" name="date_to" value="{{ filter_date_to }}">
+                </div>
+            </div>
+            <div class="filter-field" style="margin-bottom:8px;">
+                <label>પ્રસંગ / ઇવેન્ટ</label>
+                <select name="event_tag">
+                    <option value="">-- બધા પ્રસંગ --</option>
+                    {% for tag in all_event_tags %}
+                    <option value="{{ tag }}" {% if filter_event == tag %}selected{% endif %}>{{ tag }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button type="submit"><i class="fas fa-filter"></i> ફિલ્ટર કરો</button>
+                {% if filter_date_from or filter_date_to or filter_event %}
+                <a href="/yuvak/ledger">✕ સાફ કરો</a>
+                {% endif %}
+            </div>
+        </form>
+        {% if filter_date_from or filter_date_to or filter_event %}
+        <div class="active-filter-note">
+            🔍 ફિલ્ટર ચાલુ છે:
+            {% if filter_event %}<strong>{{ filter_event }}</strong>{% endif %}
+            {% if filter_date_from %} {{ filter_date_from }} થી{% endif %}
+            {% if filter_date_to %} {{ filter_date_to }} સુધી{% endif %}
+            — {{ ledger|length }} એન્ટ્રી, ચોખ્ખું: {% if balance >= 0 %}+{% endif %}₹{{ balance|inr_amt }}
+        </div>
+        {% endif %}
+
+        <!-- ===== FILTER TABS ===== -->
+        <div class="filter-tabs">
+            <button type="button" class="filter-tab active" data-filter="all" onclick="filterTxns('all')">બધા ({{ ledger|length }})</button>
+            <button type="button" class="filter-tab" data-filter="income" onclick="filterTxns('income')">
+                <i class="fas fa-arrow-down"></i> આવક
+            </button>
+            <button type="button" class="filter-tab" data-filter="expense" onclick="filterTxns('expense')">
+                <i class="fas fa-arrow-up"></i> જાવક
+            </button>
+        </div>
+
+        <!-- ===== TRANSACTION LIST ===== -->
+        {% if ledger %}
+        <div class="txn-list" id="txnList">
+            {% for entry in ledger %}
+            <div class="txn-card {{ 'txn-income' if entry.type_raw == 'income' else 'txn-expense' }}" data-type="{{ entry.type_raw }}">
+                <div class="txn-left">
+                    <div class="txn-icon">
+                        <i class="fas fa-{{ 'arrow-down' if entry.type_raw == 'income' else 'arrow-up' }}"></i>
+                    </div>
+                    <div class="txn-info">
+                        <div class="txn-desc">{{ entry.desc }}</div>
+                        <div class="txn-meta">
+                            {{ entry.date }}{% if entry.donor_name and entry.donor_name != '-' %} • {{ entry.donor_name }}{% endif %}
+                            {% if entry.event_tag and entry.event_tag != 'સામાન્ય' %}<span class="event-chip">🏷️ {{ entry.event_tag }}</span>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="txn-right">
+                    <div class="txn-amount">{{ '+' if entry.type_raw == 'income' else '-' }}₹{{ entry.amount|inr_amt }}</div>
+                    {% if user_is_treasurer %}
+                    <div class="txn-actions">
+                        <a href="/yuvak/ledger/edit/{{ entry.id }}" class="btn-action btn-action-edit" title="એડિટ"><i class="fas fa-edit"></i></a>
+                        <a href="/yuvak/ledger/delete/{{ entry.id }}" class="btn-action btn-action-delete" title="કાઢો" onclick="return confirm('શું તમે આ એન્ટ્રી કાઢી નાખવા માંગો છો?')"><i class="fas fa-trash"></i></a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="txn-empty">
+            <i class="fas fa-receipt"></i>
+            હજુ સુધી કોઈ એન્ટ્રી ઉમેરાઈ નથી
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<script>
+function switchAddTab(tab) {
+    document.querySelectorAll('.add-tab-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+    document.querySelectorAll('.add-form-panel').forEach(function(panel) {
+        panel.classList.toggle('active', panel.id === 'panel-' + tab);
+    });
+}
+
+function filterTxns(type) {
+    document.querySelectorAll('.filter-tab').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.filter === type);
+    });
+    document.querySelectorAll('.txn-card').forEach(function(card) {
+        card.style.display = (type === 'all' || card.dataset.type === type) ? 'flex' : 'none';
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>અમારા વિશે & સંપર્ક - સમાજ સિસ્ટમ</title>
+    <!-- Bootstrap 5 & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Gujarati -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+Gujarati:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0fdf4 0%, #e2e8f0 100%);
+            font-family: 'Outfit', 'Noto Sans Gujarati', sans-serif;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .header-title {
+            color: #065f46;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .section-heading {
+            color: #047857;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+        .section-heading::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: #10b981;
+            border-radius: 2px;
+        }
+        .feature-item {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #10b981;
+            transition: transform 0.2s ease;
+        }
+        .feature-item:hover {
+            transform: translateX(5px);
+            background: #f1f5f9;
+        }
+        .info-box {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+        .info-box:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border-color: #cbd5e1;
+        }
+        .btn-modern-home {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 12px 30px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            transition: all 0.3s ease;
+        }
+        .btn-modern-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="main-card p-4 p-md-5">
+                    
+                    <!-- હેડિંગ -->
+                    <div class="text-center mb-5">
+                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill mb-3 fw-bold">જય શ્રી સ્વામિનારાયણ</span>
+                        <h1 class="header-title display-6 mb-2">શ્રી કચ્છ કડવા પાટીદાર સત્સંગ સમાજ</h1>
+                        <p class="text-muted fw-semibold fs-5">શ્રી કચ્છ કડવા પાટીદાર સત્સંગ યુવક મંડળ, નડિયાદ</p>
+                        <div class="mx-auto mt-3" style="width: 80px; height: 4px; background: #059669; border-radius: 2px;"></div>
+                    </div>
+
+                    <!-- અમારા વિશે સેક્શન -->
+                    <div class="mb-5">
+                        <h4 class="section-heading"><i class="fas fa-scroll me-2"></i> સમાજ સિસ્ટમ વિશે</h4>
+                        <p class="text-secondary fs-6 lh-lg">
+                            <strong>સમાજ સિસ્ટમ</strong> આપણી સમાજના પરિવારો, ચૂલા યાદી, અને યુવક મંડળને ડિજિટલ રીતે જાળવવા માટે બનાવવામાં આવેલું એક અત્યંત આધુનિક પ્લેટફોર્મ છે. આ સિસ્ટમ દ્વારા સમાજના આગેવાનો, કમિટીના સભ્યો સરળતાથી ડેટા મેનેજ કરી શકે છે તેમજ સભ્યોની માહિતી ગમે ત્યારે મેળવી શકે છે.
+                        </p>
+
+                        <h5 class="text-success fw-bold mt-4 mb-3"><i class="fas fa-star me-2"></i> મુખ્ય વિશેષતાઓ:</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    👨‍👩‍👧‍👦 <strong>પરિવાર અને ચૂલા મેનેજમેન્ટ:</strong> દરેક પરિવાર અને ચૂલા મુજબ સભ્યોની સાચી માહિતી.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    📒 <strong>ડિરેક્ટરી:</strong> ડિજિટલ માધ્યમથી સમાજની સંપૂર્ણ ડિરેક્ટરી જોઈ શકાશે.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    🩸 <strong>બ્લડ ગ્રૂપ ડિરેક્ટરી:</strong> જરૂરિયાતના સમયે બ્લડ ગ્રૂપ આધારે સભ્યોની ઝડપી શોધ.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    📅 <strong>ઇવેન્ટ્સ અને જન્મદિવસ:</strong> સમાજના ઉત્સવો અને સભ્યોના જન્મદિવસની યાદી.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="text-muted opacity-25 mb-5">
+
+                    <!-- સંપર્ક કરો સેક્શન -->
+                    <div class="mb-4">
+                        <h4 class="section-heading"><i class="fas fa-headset me-2"></i> અમારો સંપર્ક કરો</h4>
+                        <p class="text-secondary fs-6">જો તમને સિસ્ટમ બાબતે કોઈ પણ માર્ગદર્શન આપવું હોય કે જોઈતું હોય, તો નીચેના માધ્યમથી સંપર્ક કરી શકો છો:</p>
+                        
+                        <div class="row mt-4 g-4">
+                            <!-- સ્થળ કાર્ડ -->
+                            <div class="col-md-6">
+                                <div class="info-box">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-3 me-3">
+                                            <i class="fas fa-map-marker-alt fa-lg"></i>
+                                        </div>
+                                        <h5 class="mb-0 fw-bold text-dark">સ્થળ / કાર્યાલય</h5>
+                                    </div>
+                                    <p class="mb-1 text-muted small fw-medium">શ્રી કચ્છ કડવા પાટીદાર સંત્સંગ સમાજ, નડિયાદ - પ્રમુખ શ્રી - ડો.શિવજીભાઈ વાસાણી</p>
+                                    <p class="mb-0 text-muted small fw-medium">શ્રી કચ્છ કડવા પાટીદાર સંત્સંગ યુવક મંડળ, નડિયાદ - પ્રમુખ શ્રી - ડો.અર્થીક વાસાણી</p>
+                                </div>
+                            </div>
+                            <!-- સંપર્ક કાર્ડ --> 
+                            <div class="col-md-6">
+                                <div class="info-box">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="bg-success bg-opacity-10 text-success p-3 rounded-3 me-3">
+                                            <i class="fas fa-address-book fa-lg"></i>
+                                        </div>
+                                        <h5 class="mb-0 fw-bold text-dark">વહીવટી સંપર્ક</h5>
+                                    </div>
+                                    <p class="mb-2 text-dark small"><strong>સત્સંગ સમાજ મંત્રી:</strong> કિશનભાઇ વેલાણી<br><span class="text-success fw-bold"><i class="fas fa-phone-alt me-1"></i> 98251 52209</span></p>
+                                    <p class="mb-0 text-dark small"><strong>યુવક મંડળ મંત્રી:</strong> અલ્પેશ ગોગારી<br><span class="text-success fw-bold"><i class="fas fa-phone-alt me-1"></i> 99251 52963</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- હોમ બટન -->
+                    <div class="text-center mt-5">
+                        <a href="/" class="btn btn-modern-home">
+                            <i class="fas fa-home me-2"></i> હોમ પેજ પર જાઓ
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

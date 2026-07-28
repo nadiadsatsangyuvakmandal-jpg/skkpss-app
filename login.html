@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-80 mt-4 mb-5">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-5">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4 p-sm-5">
+                    <h3 class="text-center fw-bold mb-4">🔐 લૉગિન</h3>
+                    
+                    {% if error %}
+                        <div class="alert alert-danger text-center py-2">{{ error }}</div>
+                    {% endif %}
+                    
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">યુઝરનેમ</label>
+                            <input type="text" name="username" class="form-control form-control-lg fs-6" autocomplete="off" placeholder="યુઝરનેમ દાખલ કરો" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">પાસવર્ડ</label>
+                            <input type="password" name="password" class="form-control form-control-lg fs-6" autocomplete="current-password" placeholder="પાસવર્ડ દાખલ કરો" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm">લૉગિન કરો</button>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center text-muted" style="font-size: 14px;">
+                        ડિફોલ્ટ લોગિન માહિતી:<br>
+                        યુઝરનેમ: | પાસવર્ડ: <br>
+                        <hr class="my-2">
+                        <span style="color: #065f46; font-weight: bold;">
+                            <i class="fas fa-phone-alt me-1"></i> સંપર્ક કરો: અલ્પેશ પટેલ 99251 52963
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if yuvak %}સભ્ય વિગત સુધારો{% else %}નવો યુવક સભ્ય ઉમેરો{% endif %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light p-4">
+<div class="container bg-white p-4 rounded shadow" style="max-width: 600px;">
+    <h3 class="text-success fw-bold mb-4">
+        {% if yuvak %}📝 સભ્ય વિગત સુધારો{% else %}➕ નવો યુવક સભ્ય ઉમેરો{% endif %}
+    </h3>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label fw-bold">પૂરું નામ - અટક પહેલા લખવી (FULL NAME) *</label>
+            <input type="text" name="name" class="form-control" value="{% if yuvak %}{{ yuvak[1] }}{% endif %}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">મોબાઈલ નંબર *</label>
+            <input type="tel" name="mobile" class="form-control" value="{% if yuvak %}{{ yuvak[3] }}{% endif %}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">જન્મ તારીખ (DD-MM-YYYY) *</label>
+            <input type="text" name="birth_date" class="form-control" placeholder="DD-MM-YYYY" value="{% if yuvak %}{{ yuvak[2] }}{% endif %}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">સરનામું (ADDRESS) *</label>
+            <textarea name="address" class="form-control" rows="2" required>{% if yuvak %}{{ yuvak[4] }}{% endif %}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">અભ્યાસ (Education) *</label>
+            <input type="text" name="education" class="form-control" value="{% if yuvak %}{{ yuvak[5] }}{% endif %}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Commercial / HOBBY *</label>
+            <input type="text" name="hobby" class="form-control" value="{% if yuvak %}{{ yuvak[6] }}{% endif %}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">પ્રવેશ ફી (Entry Fee)</label>
+            <input type="number" name="entry_fee" class="form-control" value="{% if yuvak %}{{ yuvak[7] }}{% else %}0{% endif %}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">ફોટો અપલોડ (Photograph) *</label>
+            <input type="file" name="photo" class="form-control" accept="image/*" {% if not yuvak %}required{% endif %}>
+            {% if yuvak and yuvak[9] %}
+                <div class="mt-2">
+                    <span class="small text-muted">હાલનો ફોટો:</span> <a href="{{ yuvak[9] }}" target="_blank" class="small">જુઓ</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-4 form-check">
+            <input type="checkbox" name="is_executive" class="form-check-input" id="is_exec" {% if yuvak and yuvak[8] == 1 %}checked{% endif %}>
+            <label class="form-check-label fw-bold text-danger" for="is_exec">આ સભ્ય કારોબારી (Executive Body) માં છે?</label>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success fw-bold px-4">💾 સેવ કરો</button>
+            <a href="/yuvak" class="btn btn-secondary">પાછા જાઓ</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

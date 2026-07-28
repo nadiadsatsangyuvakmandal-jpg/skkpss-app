@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event[1] }} - RSVP</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans Gujarati', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+            margin: 0;
+            padding: 20px;
+            color: #1e293b;
+        }
+        .card {
+            max-width: 580px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(76, 29, 149, 0.12);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #5b21b6, #7c3aed);
+            color: #fff;
+            padding: 22px 24px;
+            text-align: center;
+        }
+        .header h1 { margin: 0 0 6px; font-size: 22px; }
+        .header h1 i { color: #fcd34d; }
+        .header p { margin: 2px 0; font-size: 13px; opacity: 0.9; }
+        .header .society {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 6px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            padding-top: 8px;
+        }
+        form { padding: 24px; }
+        .field { margin-bottom: 16px; }
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #334155;
+        }
+        label .required { color: #dc2626; }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: #fafaff;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+            background: #ffffff;
+        }
+        .row2 { display: flex; gap: 12px; }
+        .row2 .field { flex: 1; }
+        textarea { resize: vertical; min-height: 60px; }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #5b21b6, #7c3aed);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.35);
+            background: linear-gradient(135deg, #4c1d95, #6d28d9);
+        }
+        .btn-submit i { color: #fcd34d; }
+        .expired {
+            text-align: center;
+            padding: 40px 24px;
+            color: #dc2626;
+            font-size: 17px;
+        }
+        .expired i { font-size: 40px; display: block; margin-bottom: 12px; }
+        .file-hint {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        .tagline {
+            font-size: 13px;
+            color: #8b5cf6;
+            text-align: center;
+            padding: 12px 0 4px;
+            font-weight: 500;
+        }
+        @media (max-width: 480px) {
+            .row2 { flex-direction: column; gap: 0; }
+            .header h1 { font-size: 18px; }
+            form { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <h1><i class="fas fa-music"></i> {{ event[1] }}</h1>
+        <p>📅 તારીખ: {{ event[2] }} &nbsp;|&nbsp; ⏰ ડેડલાઈન: {{ event[3] }}</p>
+        <div class="society">🎭 સાંસ્કૃતિક કાર્યક્રમ</div>
+    </div>
+
+    {% if is_expired %}
+    <div class="expired">
+        <i class="fas fa-hourglass-end"></i>
+        ક્ષમા કરશો, આ RSVP લિંકની ડેડલાઈન પૂરી થઈ ગઈ છે.
+    </div>
+    {% else %}
+    <form method="POST" enctype="multipart/form-data">
+        
+        <!-- ===== FAMILY SELECTION ===== -->
+        <div class="field">
+            <label>પરિવાર / ફર્મ પસંદ કરો <span class="required">*</span></label>
+            <select name="family_id" id="family_id" required onchange="lookupExisting()">
+                <option value="">-- પસંદ કરો --</option>
+                {% for f in families %}
+                <option value="{{ f[0] }}">{{ f[1] }}</option>
+                {% endfor %}
+            </select>
+            <div id="existingNotice" style="display:none; margin-top:8px; background:#ecfdf5; border:1.5px solid #6ee7b7; color:#065f46; border-radius:8px; padding:8px 10px; font-size:12.5px; font-weight:600;">
+                ✅ તમે પહેલા આ ફોર્મ ભરેલું છે — તમારી અગાઉની વિગત નીચે આપોઆપ ભરાઈ ગઈ છે. જરૂર હોય તો બદલીને ફરી સબમિટ કરો.
+            </div>
+        </div>
+
+        <!-- ===== MEMBER NAME & MOBILE ===== -->
+        <div class="row2">
+            <div class="field">
+                <label>સભ્યનું નામ <span class="required">*</span></label>
+                <input type="text" name="member_name" id="member_name" placeholder="પૂરું નામ" required>
+            </div>
+            <div class="field">
+                <label>મોબાઈલ નંબર</label>
+                <input type="tel" name="mobile_number" id="mobile_number" placeholder="9876543210">
+            </div>
+        </div>
+
+        <!-- ===== ITEM NAME ===== -->
+        <div class="field">
+            <label>કાર્યક્રમ / આઇટમનું નામ <span class="required">*</span></label>
+            <input type="text" name="item_name" id="item_name" placeholder="દા.ત. ગરબા, ભજન, નાટક" required>
+        </div>
+
+        <!-- ===== LEADER DETAILS ===== -->
+        <div class="row2">
+            <div class="field">
+                <label>ટીમ લીડરનું નામ</label>
+                <input type="text" name="leader_name" id="leader_name" placeholder="લીડરનું પૂરું નામ">
+            </div>
+            <div class="field">
+                <label>લીડરનો મોબાઈલ</label>
+                <input type="tel" name="leader_mobile" id="leader_mobile" placeholder="9876543210">
+            </div>
+        </div>
+
+        <!-- ===== PARTICIPANTS COUNT & DURATION ===== -->
+        <div class="row2">
+            <div class="field">
+                <label>સહભાગીઓની સંખ્યા</label>
+                <input type="number" name="participants_count" id="participants_count" min="1" value="1">
+            </div>
+            <div class="field">
+                <label>કાર્યક્રમનો સમય (મિનિટ)</label>
+                <input type="text" name="program_duration" id="program_duration" placeholder="દા.ત. 5 મિનિટ">
+            </div>
+        </div>
+
+        <!-- ===== PARTICIPANTS NAMES ===== -->
+        <div class="field">
+            <label>સહભાગીઓના નામ</label>
+            <textarea name="participants_names" id="participants_names" rows="3" placeholder="દરેક નામ અલ્પવિરામથી અલગ કરો..."></textarea>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- ===== HEAD COUNT - REMOVED COMPLETELY ===== -->
+        <!-- ========================================================= -->
+
+        <!-- ===== FILE UPLOAD ===== -->
+        <div class="field">
+            <label>📎 ફાઈલ અપલોડ કરો (ફોટો/વિડિયો/ઓડિયો)</label>
+            <input type="file" name="uploaded_file" accept=".jpg,.jpeg,.png,.gif,.webp,.mp3,.wav,.ogg,.mp4,.webm,.mov">
+            <div class="file-hint">JPG, PNG, MP3, MP4 (Max 100MB)</div>
+            <div id="existingFileNotice" style="display:none; font-size:12px; color:#7c3aed; margin-top:4px;"></div>
+        </div>
+
+        <!-- ===== ADDITIONAL INFO ===== -->
+        <div class="field">
+            <label>વધારાની માહિતી</label>
+            <textarea name="other_info" id="other_info" rows="2" placeholder="જો કોઈ વિશેષ માહિતી આપવી હોય..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            <i class="fas fa-paper-plane"></i> RSVP સબમિટ કરો
+        </button>
+        <div class="tagline">🙏 ધન્યવાદ</div>
+    </form>
+    {% endif %}
+</div>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script>
+function lookupExisting() {
+    var familySelect = document.getElementById('family_id');
+    var familyId = familySelect.value;
+    var notice = document.getElementById('existingNotice');
+    if (!familyId) {
+        notice.style.display = 'none';
+        return;
+    }
+    fetch('/rsvp/{{ event[0] }}/lookup/' + familyId)
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (!data.found) {
+                notice.style.display = 'none';
+                return;
+            }
+            notice.style.display = 'block';
+            document.getElementById('member_name').value = data.member_name || '';
+            document.getElementById('mobile_number').value = data.mobile_number || '';
+            document.getElementById('item_name').value = data.item_name || '';
+            document.getElementById('leader_name').value = data.leader_name || '';
+            document.getElementById('leader_mobile').value = data.leader_mobile || '';
+            if (data.participants_count) document.getElementById('participants_count').value = data.participants_count;
+            document.getElementById('program_duration').value = data.program_duration || '';
+            document.getElementById('participants_names').value = data.participants_names || '';
+            document.getElementById('other_info').value = data.other_info || '';
+            var fileNotice = document.getElementById('existingFileNotice');
+            if (data.file_path) {
+                fileNotice.style.display = 'block';
+                fileNotice.textContent = '📎 પહેલેથી અપલોડ થયેલ ફાઈલ છે. નવી ફાઈલ પસંદ ના કરો તો જૂની જ રહેશે.';
+            } else {
+                fileNotice.style.display = 'none';
+            }
+        })
+        .catch(function() { notice.style.display = 'none'; });
+}
+</script>
+</body>
+</html>

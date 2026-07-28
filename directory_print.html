@@ -1,0 +1,32 @@
+@app.route("/download-labels-pdf")
+def download_labels_pdf():
+    if not session.get("logged_in"):
+        return redirect("/login")
+    
+    conn = sqlite3.connect("samaj.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT f.id, f.firm_name, f.family_name, f.address, 
+               m.name as head_name, m.mobile
+        FROM families f
+        LEFT JOIN family_members m ON m.id = (
+            SELECT id FROM family_members WHERE family_id = f.id ORDER BY id ASC LIMIT 1
+        )
+        ORDER BY f.id ASC
+    """)
+    rows = cursor.fetchall()
+    conn.close()
+    
+    families = []
+    for r in rows:
+        families.append({
+            "id": r[0],
+            "firm_name": r[1] if r[1] else r[2],
+            "family_name": r[2],
+            "address": r[3],
+            "head_name": r[4],
+            "mobile": r[5]
+        })
+    
+    # અહીં 'directory_print.html' ના બદલે 'directory_labels.html' વાપરવું
+    return render_template("directory_labels.html", families=families)

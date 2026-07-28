@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>હોમ - સમાજ સિસ્ટમ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f1f5f9;
+            font-family: 'Segoe UI', 'Noto Sans Gujarati', sans-serif;
+        }
+        
+        /* ===== NAVBAR ===== */
+        .navbar-custom {
+            background: linear-gradient(135deg, #065f46, #047857);
+            padding: 12px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .navbar-custom .navbar-brand {
+            color: white;
+            font-weight: 700;
+            font-size: 22px;
+        }
+        .navbar-custom .navbar-brand span {
+            color: #fcd34d;
+        }
+        .navbar-custom .nav-link {
+    color: rgba(239, 252, 251, 0.85);
+    font-weight: 500;
+    font-size: 17px;        /* ફોન્ટ સાઈઝ થોડો કોમ્પેક્ટ કર્યો */
+    padding: 6px 7px;       /* ડાબે-જમણે જગ્યા (padding) થોડી ઓછી કરી */
+    border-radius: 6px;
+    transition: 0.3s;
+    white-space: nowrap;    /* લખાણ નીચે ન જાય પણ એક જ લાઇનમાં રહે */
+}
+        .navbar-custom .nav-link:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+        .navbar-custom .nav-link i {
+            margin-right: 6px;
+        }
+        .logout-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 8px;
+            padding: 6px 18px;
+            transition: 0.3s;
+        }
+        .logout-btn:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: white;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero-section {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            padding: 40px 20px 30px;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .hero-section h1 {
+            color: #065f46;
+            font-weight: 800;
+            font-size: 32px;
+        }
+        .hero-section h1 span {
+            color: #059669;
+        }
+        .hero-section p {
+            color: #64748b;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        /* ===== STATS CARDS ===== */
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 18px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            border: 1px solid #e2e8f0;
+            height: 100%;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-color: #10b981;
+        }
+        .stat-card .stat-icon {
+            font-size: 36px;
+            margin-bottom: 6px;
+        }
+        .stat-card .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .stat-card .stat-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .stat-card.green .stat-number { color: #059669; }
+        .stat-card.blue .stat-number { color: #3b82f6; }
+        .stat-card.purple .stat-number { color: #8b5cf6; }
+        .stat-card.orange .stat-number { color: #f59e0b; }
+
+        /* ===== QUICK LINKS ===== */
+        .quick-links-section {
+            padding: 10px 0 20px;
+        }
+        .quick-links-section .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quick-links-section .section-title i {
+            color: #059669;
+        }
+
+        .quick-link-card {
+            display: block;
+            text-align: center;
+            padding: 22px 12px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #1e293b;
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+        }
+        .quick-link-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+            border-color: #10b981;
+        }
+        .quick-link-card .ql-icon {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 8px;
+            width: 64px;
+            height: 64px;
+            line-height: 64px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 28px;
+            transition: 0.3s;
+        }
+        .quick-link-card:hover .ql-icon {
+            background: #d1fae5;
+            transform: scale(1.05);
+        }
+        .quick-link-card .ql-text {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1e293b;
+        }
+        .quick-link-card .ql-badge {
+            font-size: 10px;
+            color: #10b981;
+            display: block;
+            margin-top: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== EXPORT SECTION CARD ===== */
+        .export-section {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 20px 24px;
+            margin-top: 10px;
+        }
+        .export-section .export-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 2px;
+        }
+        .export-section .export-subtitle {
+            font-size: 13px;
+            color: #64748b;
+        }
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .export-btn {
+            padding: 8px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .export-btn.pdf {
+            background: #dc2626;
+            color: white;
+        }
+        .export-btn.pdf:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+            color: white;
+        }
+        .export-btn.excel {
+            background: #16a34a;
+            color: white;
+        }
+        .export-btn.excel:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+            color: white;
+        }
+        .export-btn.whatsapp {
+            background: #25D366;
+            color: white;
+        }
+        .export-btn.whatsapp:hover {
+            background: #1da851;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-custom {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 30px;
+            color: #64748b;
+            font-size: 14px;
+        }
+        .footer-custom span {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        @media (max-width: 576px) {
+            .hero-section h1 { font-size: 24px; }
+            .stat-card .stat-number { font-size: 22px; }
+            .quick-link-card { padding: 16px 10px; }
+            .quick-link-card .ql-icon { width: 50px; height: 50px; line-height: 50px; font-size: 22px; }
+            .export-section { padding: 16px; }
+            .export-buttons { justify-content: center; }
+            .export-btn { padding: 6px 14px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================ -->
+    <!-- NAVBAR -->
+    <!-- ============================================================ -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                🏛️ <span>સમાજ</span> સિસ્ટમ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> હોમ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/families"><i class="fas fa-users"></i> પરિવારો</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/house-list"><i class="fas fa-house-user"></i> ચૂલા યાદી</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/directory"><i class="fas fa-address-book"></i> ડિરેક્ટરી</a>
+                    </li>
+                                       
+                    <!-- 🩸 ગ્રીન ડેશબોર્ડ માટે બ્લડ ગ્રૂપ ડ્રોપડાઉન -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="bloodGroupDropdownHome" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-tint me-1 text-danger"></i> બ્લડ ગ્રૂપ
+                        </a>
+                        <ul class="dropdown-menu shadow" aria-labelledby="bloodGroupDropdownHome">
+                            <li><a class="dropdown-item" href="/blood-group/A+">A+ Positive</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/A-">A- Negative</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/B+">B+ Positive</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/B-">B- Negative</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/O+">O+ Positive</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/O-">O- Negative</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/AB+">AB+ Positive</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/AB-">AB- Negative</a></li>
+                            <li><a class="dropdown-item" href="/blood-group/ALL">બધા બ્લડ ગ્રૂપ (All)</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/events"><i class="fas fa-calendar-alt"></i> ઇવેન્ટ્સ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/yuvak"><i class="fas fa-user-graduate"></i> યુવક</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/birthdays"><i class="fas fa-birthday-cake"></i> જન્મદિવસ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/yuvak/ledger"><i class="fas fa-book"></i> લેજર</a>
+                    </li>
+                    {% if session.get('role') == 'treasurer' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/manage-users"><i class="fas fa-users-cog"></i> યુઝર મેનેજ</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link logout-btn" href="/logout"><i class="fas fa-sign-out-alt"></i> લોગઆઉટ</a>
+                    </li>
+                    <li class="nav-item">
+    <a class="nav-link" href="/about-contact"><i class="fas fa-address-card"></i> અમારા વિશે & સંપર્ક</a>
+</li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================ -->
+    <!-- HERO SECTION -->
+    <!-- ============================================================ -->
+    <div class="hero-section">
+        <div class="container">
+            <h1> <span>શ્રી કચ્છ કડવા પાટીદાર</span> સત્સંગ સમાજ</h1>
+            <p class="sub-title"> શ્રી કચ્છ કડવા પાટીદાર સંત્સંગ યુવક મંડળ, નડિયાદ</p>
+            <p style="font-size: 25px; color: #002d6b; font-weight: bold; margin-top: 2px;">
+                📅 {{ now.strftime('%d-%m-%Y') }}
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================================================ -->
+    <div class="container">
+
+        <!-- ===== STATS CARDS ===== -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-6">
+                <div class="stat-card green">
+                    <div class="stat-icon">👨‍👩‍👧‍👦</div>
+                    <div class="stat-number">{{ total_families }}</div>
+                    <div class="stat-label">પરિવારો</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card blue">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-number">{{ total_events }}</div>
+                    <div class="stat-label">ઇવેન્ટ્સ</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card purple">
+                    <div class="stat-icon">🧑‍🤝‍🧑</div>
+                    <div class="stat-number">{{ total_yuvak }}</div>
+                    <div class="stat-label">યુવક મંડળ</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card orange">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-number">₹{{ 0 if session.get('role') == 'farm_head' else total_collection|int }}</div>
+                    <div class="stat-label">કુલ કલેક્શન</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 🚀 ઝડપી લિંક્સ (QUICK LINKS) - ફાર્મ હેડ માટે બંધ રાખેલ છે -->
+        <!-- ============================================================ -->
+        {% if session.get('role') != 'farm_head' %}
+        <div class="quick-links-section">
+            <div class="section-title">
+                <i class="fas fa-bolt"></i> ઝડપી લિંક્સ
+            </div>
+
+            <div class="row g-3">
+                <!-- 1. પરિવાર ઉમેરો -->
+                <div class="col-md-3 col-6">
+                    <a href="/family/add" class="quick-link-card">
+                        <span class="ql-icon">👨‍👩‍👧‍👦</span>
+                        <span class="ql-text">પરિવાર ઉમેરો</span>
+                        <span class="ql-badge">નવું</span>
+                    </a>
+                </div>
+
+                <!-- 2. યુવક ઉમેરો -->
+                <div class="col-md-3 col-6">
+                    <a href="/yuvak/add" class="quick-link-card">
+                        <span class="ql-icon">🧑‍🤝‍🧑</span>
+                        <span class="ql-text">યુવક ઉમેરો</span>
+                        <span class="ql-badge">નવું</span>
+                    </a>
+                </div>
+
+                <!-- 3. જન્મદિવસ -->
+                <div class="col-md-3 col-6">
+                    <a href="/birthdays" class="quick-link-card">
+                        <span class="ql-icon">🎂</span>
+                        <span class="ql-text">જન્મદિવસ</span>
+                        <span class="ql-badge">જુઓ</span>
+                    </a>
+                </div>
+
+                <!-- 4. ઇવેન્ટ ઉમેરો -->
+                <div class="col-md-3 col-6">
+                    <a href="/event/add" class="quick-link-card">
+                        <span class="ql-icon">➕</span>
+                        <span class="ql-text">ઇવેન્ટ ઉમેરો</span>
+                        <span class="ql-badge">નવું</span>
+                    </a>
+                </div>
+
+                <!-- 5. યુવક લેજર -->
+                <div class="col-md-3 col-6">
+                    <a href="/yuvak/ledger" class="quick-link-card">
+                        <span class="ql-icon">📒</span>
+                        <span class="ql-text">યુવક લેજર</span>
+                        <span class="ql-badge">જુઓ</span>
+                    </a>
+                </div>
+
+                <!-- 6. પબ્લિક સભ્ય ઉમેરો -->
+                <div class="col-md-3 col-6">
+                    <a href="/member/add-public" class="quick-link-card" style="border-color: #10b981; background: #f0fdf4;">
+                        <span class="ql-icon" style="background: #10b981; color: white;">👤</span>
+                        <span class="ql-text" style="color: #065f46;">સભ્ય ઉમેરો</span>
+                        <span class="ql-badge" style="color: #059669;">🔓 પબ્લિક</span>
+                    </a>
+                </div>
+
+            </div> <!-- /row -->
+        </div> <!-- /quick-links-section -->
+        {% endif %}
+
+        <!-- ============================================================ -->
+        <!-- ⭐ પરિવારો સેક્શન - PDF, Excel & WhatsApp શેર - ફાર્મ હેડ માટે બંધ રાખેલ છે -->
+        <!-- ============================================================ -->
+        {% if session.get('role') != 'farm_head' %}
+        <div class="export-section">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <div>
+                    <div class="export-title">
+                        <i class="fas fa-file-alt" style="color: #059669;"></i> 
+                        પરિવારો એક્સપોર્ટ
+                    </div>
+                    <div class="export-subtitle">PDF, Excel માં ડાઉનલોડ કરો અથવા WhatsApp પર શેર કરો</div>
+                </div>
+                <div class="export-buttons mt-2 mt-md-0">
+                    <!-- PDF Button -->
+                    <a href="/collection/export/pdf" class="export-btn pdf">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </a>
+                    <!-- Excel Button -->
+                    <a href="/collection/export/excel" class="export-btn excel">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </a>
+                    <!-- WhatsApp Share Button -->
+                    <a href="https://wa.me/?text=🙏%20નમસ્તે!%0A%0A📝%20શ્રી%20કચ્છ%20કડવા%20પાટીદાર%20સત્સંગ%20સમાજ%20માં%20નવો%20સભ્ય%20ઉમેરવા%20માટે%20નીચેની%20લિંક%20ખોલો:%0A%0A🔗%20https://satsangyuvakmandal.pythonanywhere.com/member/add-public%0A%0Aધન્યવાદ!%20🙏" 
+                       target="_blank" 
+                       class="export-btn whatsapp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div> <!-- /container -->
+
+    <!-- ============================================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================================ -->
+    <div class="footer-custom">
+        🏛️ <span>શ્રી કચ્છ કડવા પાટીદાર સત્સંગ સમાજ</span> • નડિયાદ
+        <br>
+        <small>© 2026 સર્વાધિકાર સુરક્ષિત</small>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

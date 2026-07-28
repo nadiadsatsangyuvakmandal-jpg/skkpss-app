@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>યુવક મંડળ જોડાઓ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            min-height: 100vh; 
+            padding: 30px 0; 
+        }
+        .form-container { max-width: 700px; margin: 0 auto; }
+        
+        /* ===== CARD ===== */
+        .card { 
+            border-radius: 24px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15); 
+            border: none; 
+            overflow: hidden; 
+        }
+        
+        /* ===== HEADER ===== */
+        .card-header { 
+            background: linear-gradient(135deg, #1b5e20, #2e7d32, #388e3c); 
+            color: white; 
+            padding: 30px 35px 25px; 
+            text-align: center; 
+            border-bottom: 4px solid #ff6f00;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+        }
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: -60%;
+            left: -10%;
+            width: 250px;
+            height: 250px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 50%;
+        }
+        .card-header .main-title { 
+            font-size: 26px; 
+            font-weight: 800; 
+            letter-spacing: 1px;
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            position: relative;
+            z-index: 1;
+        }
+        .card-header .main-title i {
+            color: #ffd54f;
+            margin: 0 6px;
+        }
+        .card-header .sub-title {
+            font-size: 14px;
+            color: #a5d6a7;
+            margin-top: 6px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        .card-header .decorative-line {
+            width: 80px;
+            height: 3px;
+            background: #ffd54f;
+            margin: 10px auto 0;
+            border-radius: 4px;
+            position: relative;
+            z-index: 1;
+        }
+        .card-header .instruction {
+            margin-top: 16px;
+            padding: 10px 20px;
+            background: rgba(255,215,0,0.12);
+            border-radius: 12px;
+            border-left: 4px solid #ffd54f;
+            font-size: 14px;
+            color: #fff9c4;
+            position: relative;
+            z-index: 1;
+        }
+        .card-header .instruction i {
+            color: #ffd54f;
+            margin-right: 8px;
+        }
+        
+        /* ===== BODY ===== */
+        .card-body { 
+            padding: 35px; 
+            background: #ffffff;
+        }
+        
+        /* ===== FORM ELEMENTS ===== */
+        .form-label { 
+            font-weight: 600; 
+            color: #1b5e20; 
+            font-size: 14px; 
+        }
+        .form-label .required {
+            color: #d32f2f;
+            margin-left: 3px;
+        }
+        .form-control, .form-select { 
+            border-radius: 12px; 
+            border: 2px solid #e8f5e9; 
+            padding: 11px 16px; 
+            transition: all 0.3s; 
+            font-size: 14px; 
+            background: #fafffe;
+        }
+        .form-control:focus, .form-select:focus { 
+            border-color: #2e7d32; 
+            box-shadow: 0 0 0 4px rgba(46,125,50,0.12); 
+            background: #ffffff;
+        }
+        
+        /* ===== SECTION TITLE ===== */
+        .section-title { 
+            font-size: 17px; 
+            font-weight: 700; 
+            padding: 12px 18px; 
+            border-radius: 12px; 
+            margin-bottom: 22px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            color: #1b5e20;
+            border-left: 5px solid #2e7d32;
+        }
+        
+        /* ===== FILE UPLOAD ===== */
+        .file-upload-wrapper { 
+            position: relative; 
+            border: 2px dashed #a5d6a7; 
+            border-radius: 14px; 
+            padding: 22px; 
+            text-align: center; 
+            transition: all 0.3s; 
+            cursor: pointer; 
+            background: #fafffe; 
+        }
+        .file-upload-wrapper:hover { 
+            border-color: #2e7d32; 
+            background: #e8f5e9; 
+        }
+        .file-upload-wrapper input[type="file"] { 
+            position: absolute; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            opacity: 0; 
+            cursor: pointer; 
+        }
+        .file-upload-wrapper .upload-icon { 
+            font-size: 38px; 
+            color: #81c784; 
+            margin-bottom: 8px; 
+        }
+        .file-upload-wrapper .upload-text { 
+            color: #558b2f; 
+            font-size: 14px; 
+        }
+        .file-upload-wrapper .upload-text strong { 
+            color: #2e7d32; 
+        }
+        .file-name-display { 
+            margin-top: 10px; 
+            padding: 8px 16px; 
+            background: #e8f5e9; 
+            border-radius: 8px; 
+            display: none; 
+            font-size: 13px; 
+            color: #1b5e20; 
+            font-weight: 500;
+        }
+        .file-name-display.show { display: block; }
+        
+        /* ===== BUTTON ===== */
+        .btn-submit { 
+            background: linear-gradient(135deg, #1b5e20, #2e7d32, #388e3c); 
+            color: white; 
+            border: none; 
+            padding: 14px 40px; 
+            border-radius: 50px; 
+            font-weight: 700; 
+            font-size: 18px; 
+            transition: all 0.3s; 
+            width: 100%; 
+            letter-spacing: 1px;
+        }
+        .btn-submit:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 30px rgba(46,125,50,0.4); 
+            color: white; 
+        }
+        .btn-submit i {
+            color: #ffd54f;
+        }
+        
+        /* ===== HELP TEXT ===== */
+        .help-text { font-size: 12px; color: #81a784; margin-top: 5px; }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 576px) { 
+            .card-body { padding: 20px; } 
+            .card-header { padding: 20px; } 
+            .card-header .main-title { font-size: 20px; }
+            .section-title { font-size: 15px; padding: 10px 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container form-container">
+        <div class="card">
+            
+            <!-- ===== HEADER ===== -->
+            <div class="card-header">
+                <div class="main-title">
+                    <i class="fas fa-flag"></i> શ્રી કચ્છ કડવા પાટીદાર સત્સંગ યુવક મંડળ <i class="fas fa-flag"></i>
+                </div>
+                <div class="sub-title">
+                    <i class="fas fa-map-marker-alt me-1"></i> નડિયાદ
+                </div>
+                <div class="decorative-line"></div>
+                <div class="instruction">
+                    <i class="fas fa-info-circle"></i> કૃપા કરીને નીચેની તમામ વિગતો સાચી અને સચોટ ભરો.
+                </div>
+            </div>
+            
+            <!-- ===== BODY ===== -->
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    
+                    <!-- ===== SECTION: વ્યક્તિગત વિગત ===== -->
+                    <div class="section-title">
+                        <i class="fas fa-user-circle"></i> વ્યક્તિગત વિગત
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">પૂરું નામ <span class="required">*</span></label>
+                        <input type="text" name="name" class="form-control" placeholder="દા.ત. રમેશભાઈ પટેલ" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">જન્મ તારીખ</label>
+                        <input type="date" name="birth_date" class="form-control">
+                        <div class="help-text">દા.ત. 01-01-2000</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">મોબાઈલ નંબર <span class="required">*</span></label>
+                        <input type="tel" name="mobile" class="form-control" placeholder="98765 43210" required>
+                        <div class="help-text">10 અંકનો મોબાઈલ નંબર</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">સરનામું</label>
+                        <input type="text" name="address" class="form-control" placeholder="તમારું સરનામું">
+                    </div>
+
+                    <hr style="border-color: #e8f5e9; margin: 25px 0;">
+
+                    <!-- ===== SECTION: અભ્યાસ અને શોખ ===== -->
+                    <div class="section-title">
+                        <i class="fas fa-graduation-cap"></i> અભ્યાસ અને શોખ
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">અભ્યાસ</label>
+                        <input type="text" name="education" class="form-control" placeholder="દા.ત. 10, 12, B.Com, M.Sc">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">શોખ / રુચિઓ</label>
+                        <input type="text" name="hobby" class="form-control" placeholder="દા.ત. ક્રિકેટ, વાંચન, સંગીત">
+                    </div>
+
+                    <hr style="border-color: #e8f5e9; margin: 25px 0;">
+
+                    <!-- ===== SECTION: ફી અને ફોટો ===== -->
+                    <div class="section-title">
+                        <i class="fas fa-money-bill-wave"></i> પ્રવેશ ફી અને ફોટો
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">પ્રવેશ ફી (₹)</label>
+                        <input type="number" step="0.01" name="entry_fee" class="form-control" value="0" min="0">
+                        <div class="help-text">વૈકલ્પિક - જો લાગુ હોય તો જ ભરો</div>
+                    </div>
+
+                    <div class="mb-3"> 
+    <label class="form-label"><i class="fas fa-camera me-2"></i> ફોટો (વૈકલ્પિક)</label> 
+    <div class="file-upload-wrapper" onclick="document.getElementById('photoInput').click()"> 
+        <i class="fas fa-cloud-upload-alt upload-icon"></i> 
+        <div class="upload-text"> 
+            <strong>ક્લિક કરો</strong> અથવા ફોટો અહીં ખેંચીને મૂકો<br> 
+            <small>JPG, PNG (Max 10MB)</small> 
+        </div> 
+        <input type="file" name="photo" id="photoInput" accept="image/*" capture="user"> 
+        <div class="file-name-display" id="photoNameDisplay"> 
+            <i class="fas fa-check-circle text-success me-2"></i> 
+            <span id="photoNameText">કોઈ ફાઈલ પસંદ કરી નથી</span> 
+        </div> 
+    </div> 
+</div>
+
+                    <div class="mb-4 form-check">
+                        <input type="checkbox" name="is_executive" class="form-check-input" id="is_exec" style="border-color:#2e7d32;">
+                        <label class="form-check-label" for="is_exec" style="color:#1b5e20; font-weight:500;">
+                            કારોબારી સભ્ય
+                        </label>
+                        <div class="help-text">જો તમે કારોબારી સભ્ય છો તો ટિક કરો</div>
+                    </div>
+
+                    <hr style="border-color: #e8f5e9; margin: 25px 0;">
+
+                    <!-- ===== SUBMIT BUTTON ===== -->
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane me-2"></i> રજીસ્ટર કરો
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // PHOTO UPLOAD
+        // ============================================================
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const file = this.files[0];
+            const display = document.getElementById('photoNameDisplay');
+            const text = document.getElementById('photoNameText');
+            if (file) {
+                text.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+                display.classList.add('show');
+            } else {
+                text.textContent = 'કોઈ ફાઈલ પસંદ કરી નથી';
+                display.classList.remove('show');
+            }
+        });
+
+        // ============================================================
+        // DRAG & DROP SUPPORT
+        // ============================================================
+        const wrapper = document.querySelector('.file-upload-wrapper');
+        if (wrapper) {
+            wrapper.addEventListener('dragover', function(e) { 
+                e.preventDefault(); 
+                this.style.borderColor = '#2e7d32'; 
+                this.style.background = '#e8f5e9'; 
+            });
+            wrapper.addEventListener('dragleave', function(e) { 
+                e.preventDefault(); 
+                this.style.borderColor = '#a5d6a7'; 
+                this.style.background = '#fafffe'; 
+            });
+            wrapper.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#a5d6a7';
+                this.style.background = '#fafffe';
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    document.getElementById('photoInput').files = files;
+                    document.getElementById('photoInput').dispatchEvent(new Event('change'));
+                }
+            });
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% block title %}ચૂલા યાદી - સમાજ સિસ્ટમ{% endblock %}
+
+{% block content %}
+<style>
+    * { box-sizing: border-box; }
+
+    .page-header-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+    .page-header-actions .btn {
+        padding: 7px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        border: none;
+        text-decoration: none;
+        color: white;
+    }
+    .btn-pdf-h { background: #dc2626; }
+    .btn-excel-h { background: #0891b2; }
+    .btn-home-h { background: #64748b; }
+
+    .search-box-h {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    .search-box-h input {
+        flex: 1;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 9px 14px;
+        font-size: 14px;
+    }
+    .search-box-h input:focus {
+        outline: none;
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+    }
+    .search-box-h button, .search-box-h a {
+        border: none;
+        border-radius: 10px;
+        padding: 9px 16px;
+        font-weight: 700;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+    .search-box-h .btn-search { background: #1e3a8a; color: white; }
+    .search-box-h .btn-clear-h { background: #e2e8f0; color: #475569; }
+
+    .summary-strip {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    .summary-strip .cell {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+    }
+    .summary-strip .cell .label { font-size: 11px; color: #94a3b8; font-weight: 700; }
+    .summary-strip .cell .val { font-size: 18px; font-weight: 800; color: #1e293b; margin-top: 2px; }
+
+    .fam-block {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        margin-bottom: 14px;
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    }
+    .fam-block-header {
+        background: linear-gradient(135deg, #4338ca, #7c3aed);
+        color: white;
+        padding: 12px 14px;
+    }
+    .fam-block-header .fname { font-weight: 700; font-size: 15px; }
+    .fam-block-header .fsub { font-size: 12px; opacity: 0.9; margin-top: 2px; }
+
+    .house-group {
+        border-top: 1px solid #f1f5f9;
+        padding: 10px 14px;
+    }
+    .house-group-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        color: #4338ca;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+    .house-badge {
+        background: #eef2ff;
+        color: #4338ca;
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 12px;
+    }
+    .member-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 7px 0;
+        border-bottom: 1px dashed #f1f5f9;
+        font-size: 13px;
+        gap: 8px;
+    }
+    .member-line:last-child { border-bottom: none; }
+    .member-line .mname { font-weight: 600; color: #1e293b; }
+    .member-line .mmeta { color: #94a3b8; font-size: 11.5px; white-space: nowrap; }
+
+    .empty-state-h {
+        text-align: center;
+        padding: 40px 20px;
+        color: #94a3b8;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0"><i class="fas fa-home me-2"></i> ચૂલા પ્રમાણે યાદી</h4>
+    </div>
+    <div class="card-body">
+
+        <div class="page-header-actions">
+            <a href="/families" class="btn btn-home-h"><i class="fas fa-arrow-left me-1"></i> પરિવાર પેજ</a>
+        </div>
+
+        <div class="export-mode-box">
+            <div class="export-mode-title">📥 Export કરો:</div>
+            <div class="export-mode-row">
+                <span class="export-mode-label">બધા સભ્યો</span>
+                <a href="/house-list/export/pdf?mode=all" class="btn btn-pdf-h btn-sm-export"><i class="fas fa-file-pdf"></i> PDF</a>
+                <a href="/house-list/export/excel?mode=all" class="btn btn-excel-h btn-sm-export"><i class="fas fa-file-excel"></i> Excel</a>
+            </div>
+            <div class="export-mode-row">
+                <span class="export-mode-label">⭐ ફક્ત મુખ્ય વ્યક્તિ</span>
+                <a href="/house-list/export/pdf?mode=head" class="btn btn-pdf-h btn-sm-export"><i class="fas fa-file-pdf"></i> PDF</a>
+                <a href="/house-list/export/excel?mode=head" class="btn btn-excel-h btn-sm-export"><i class="fas fa-file-excel"></i> Excel</a>
+            </div>
+        </div>
+
+        <form method="GET" class="search-box-h">
+            <input type="text" name="search" placeholder="ફાર્મ અથવા પરિવાર શોધો..." value="{{ search }}">
+            <button type="submit" class="btn-search"><i class="fas fa-search"></i></button>
+            {% if search %}<a href="/house-list" class="btn-clear-h">✕</a>{% endif %}
+        </form>
+
+        <div class="summary-strip">
+            <div class="cell">
+                <div class="label">કુલ ચૂલા</div>
+                <div class="val">{{ total_houses }}</div>
+            </div>
+            <div class="cell">
+                <div class="label">કુલ સભ્યો</div>
+                <div class="val">{{ total_members }}</div>
+            </div>
+        </div>
+
+        {% if families %}
+        {% for fam in families %}
+        <div class="fam-block">
+            <div class="fam-block-header" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <div>
+                    <div class="fname">{{ fam.firm_name }}</div>
+                    <div class="fsub">{{ fam.family_name }} • {{ fam.house_count }} ચૂલા</div>
+                </div>
+                
+                {% if can_edit or (session.role == 'farm_head' and session.family_id == fam.family_id) %}
+            <a href="/house-list/manage/{{ fam.family_id }}" style="background:rgba(255,255,255,0.2); color:white; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:700; text-decoration:none; white-space:nowrap;">
+                ✏️ ચૂલા ગોઠવો
+            </a>
+            {% endif %}
+                
+            </div>
+            {% for house_num, members in fam.houses %}
+            <div class="house-group">
+                <div class="house-group-title">
+                    <i class="fas fa-house-user"></i> ચૂલો <span class="house-badge">{{ house_num }}</span>
+                    <span style="color:#94a3b8; font-weight:500;">({{ members|length }} સભ્ય)</span>
+                </div>
+                {% for m in members %}
+                <div class="member-line">
+                    <span class="mname">{% if m.is_head %}⭐ {% endif %}{{ m.name }}</span>
+                    <span class="mmeta">📱 {{ m.mobile }} • 🎂 {{ m.birth_date }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-state-h">
+            <i class="fas fa-house-user fa-2x d-block mb-2"></i>
+            કોઈ સભ્ય મળ્યા નથી
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

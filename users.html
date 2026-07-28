@@ -1,0 +1,43 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>👥 યુઝર્સની યાદી</h2>
+    <a href="/user/add" class="btn btn-primary">➕ નવો યુઝર ઉમેરો</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>યુઝરનેમ</th>
+                    <th>પૂરું નામ</th>
+                    <th>રોલ (Role)</th>
+                    <th>ક્રિયા</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.id }}</td>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.full_name or '-' }}</td>
+                    <td><span class="badge bg-info text-dark">{{ u.role or 'Staff' }}</span></td>
+                    <td>
+                        {% if u.username != 'admin' %}
+                            <a href="/user/edit/{{ u.id }}" class="btn btn-sm btn-warning">✏️ એડિટ</a>
+                            <a href="/user/delete/{{ u.id }}" class="btn btn-sm btn-danger" onclick="return confirm('શું તમે આ યુઝરને ડિલીટ કરવા માંગો છો?')">🗑️ ડિલિટ</a>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">મુખ્ય એડમિન</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted">કોઈ યુઝર ઉપલબ્ધ નથી.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

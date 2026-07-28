@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+{% block title %}જન્મદિવસ રીમાઇન્ડર - સમાજ સિસ્ટમ{% endblock %}
+
+{% block content %}
+<style>
+    .bd-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .bd-card {
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        border: none;
+        overflow: hidden;
+        height: 100%;
+    }
+    .bd-card .card-header {
+        padding: 18px 24px;
+        border-bottom: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .bd-card .card-header h4 {
+        margin: 0;
+        font-weight: 700;
+        color: #ffffff !important;  /* ← FIX: સફેદ રંગ ફોર્સ કર્યો */
+    }
+    .bd-card .card-header .badge-count {
+        background: rgba(255,255,255,0.25);
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #ffffff;
+    }
+    .bd-card .card-body {
+        padding: 20px 24px 24px;
+    }
+
+    /* Today Birthdays - Pink/Gold Theme */
+    .card-today .card-header {
+        background: linear-gradient(135deg, #dc2626, #f59e0b);
+        color: white !important;
+    }
+    .card-today .card-header h4 {
+        color: white !important;
+    }
+    .card-today .birthday-item {
+        background: linear-gradient(135deg, #fef2f2, #fef3c7);
+        border-left: 4px solid #dc2626;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+    .card-today .birthday-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(220,38,38,0.15);
+    }
+    .card-today .birthday-item .avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #dc2626, #f59e0b);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .card-today .birthday-item .info {
+        flex: 1;
+        padding: 0 15px;
+    }
+    .card-today .birthday-item .info .name {
+        font-weight: 700;
+        font-size: 16px;
+        color: #1e293b;
+    }
+    .card-today .birthday-item .info .family {
+        font-size: 13px;
+        color: #64748b;
+    }
+    .card-today .birthday-item .date-badge {
+        background: #dc2626;
+        color: white;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .card-today .birthday-item .cake-icon {
+        font-size: 28px;
+        margin-right: 10px;
+    }
+
+    /* Upcoming Birthdays - Blue Theme */
+    .card-upcoming .card-header {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white !important;
+    }
+    .card-upcoming .card-header h4 {
+        color: white !important;
+    }
+    .card-upcoming .birthday-item {
+        background: linear-gradient(135deg, #eff6ff, #dbeafe);
+        border-left: 4px solid #3b82f6;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 8px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+    .card-upcoming .birthday-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(59,130,246,0.12);
+    }
+    .card-upcoming .birthday-item .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .card-upcoming .birthday-item .info {
+        flex: 1;
+        padding: 0 14px;
+    }
+    .card-upcoming .birthday-item .info .name {
+        font-weight: 600;
+        font-size: 15px;
+        color: #1e293b;
+    }
+    .card-upcoming .birthday-item .info .family {
+        font-size: 12px;
+        color: #64748b;
+    }
+    .card-upcoming .birthday-item .date-badge {
+        background: #3b82f6;
+        color: white;
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .card-upcoming .birthday-item .calendar-icon {
+        font-size: 20px;
+        margin-right: 8px;
+        color: #3b82f6;
+    }
+
+    .no-birthday {
+        text-align: center;
+        padding: 30px 20px;
+        color: #94a3b8;
+    }
+    .no-birthday i {
+        font-size: 48px;
+        display: block;
+        margin-bottom: 12px;
+        color: #d1d5db;
+    }
+    .no-birthday h5 {
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+
+    .bd-today-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #ffffff !important;  /* ← FIX: સફેદ રંગ ફોર્સ કર્યો */
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .bd-today-title i {
+        font-size: 24px;
+        color: #ffffff;
+    }
+    .bd-upcoming-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #ffffff !important;  /* ← FIX: સફેદ રંગ ફોર્સ કર્યો */
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .bd-upcoming-title i {
+        font-size: 24px;
+        color: #ffffff;
+    }
+
+    @media (max-width: 576px) {
+        .card-today .birthday-item,
+        .card-upcoming .birthday-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .card-today .birthday-item .date-badge,
+        .card-upcoming .birthday-item .date-badge {
+            align-self: flex-start;
+        }
+        .bd-card .card-header h4 {
+            font-size: 16px;
+        }
+        .bd-today-title {
+            font-size: 16px;
+        }
+        .bd-upcoming-title {
+            font-size: 16px;
+        }
+    }
+</style>
+
+<div class="bd-container">
+    <div class="row g-4">
+        
+        <!-- ===== TODAY'S BIRTHDAYS ===== -->
+        <div class="col-lg-6">
+            <div class="bd-card card-today card">
+                <div class="card-header">
+                    <div class="bd-today-title">
+                        <i class="fas fa-birthday-cake"></i> આજના જન્મદિવસ
+                    </div>
+                    <span class="badge-count">
+                        🎂 {{ today_birthdays|length }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    {% if today_birthdays %}
+                        {% for b in today_birthdays %}
+                        <div class="birthday-item">
+                            <div style="display:flex; align-items:center; flex-wrap:wrap; flex:1;">
+                                <div class="avatar">
+                                    {{ b.name[0]|upper }}
+                                </div>
+                                <div class="info">
+                                    <div class="name">
+                                        🎉 {{ b.name }}
+                                    </div>
+                                    <div class="family">
+                                        <i class="fas fa-users me-1"></i> {{ b.family_name }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="date-badge">
+                                <i class="fas fa-calendar-day me-1"></i> {{ b.birth_date }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-birthday">
+                            <i class="fas fa-calendar-check"></i>
+                            <h5>આજે કોઈનો જન્મદિવસ નથી</h5>
+                            <p style="font-size:14px;">બધા સભ્યોને શુભેચ્છાઓ! 😊</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== UPCOMING BIRTHDAYS ===== -->
+        <div class="col-lg-6">
+            <div class="bd-card card-upcoming card">
+                <div class="card-header">
+                    <div class="bd-upcoming-title">
+                        <i class="fas fa-calendar-alt"></i> આવતા જન્મદિવસ
+                    </div>
+                    <span class="badge-count">
+                        📅 {{ upcoming_birthdays|length }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_birthdays %}
+                        {% for b in upcoming_birthdays %}
+                        <div class="birthday-item">
+                            <div style="display:flex; align-items:center; flex-wrap:wrap; flex:1;">
+                                <div class="avatar">
+                                    {{ b.name[0]|upper }}
+                                </div>
+                                <div class="info">
+                                    <div class="name">
+                                        {{ b.name }}
+                                    </div>
+                                    <div class="family">
+                                        <i class="fas fa-users me-1"></i> {{ b.family_name }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="date-badge">
+                                <i class="fas fa-calendar-day me-1"></i> {{ b.birth_date }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-birthday">
+                            <i class="fas fa-calendar-plus"></i>
+                            <h5>કોઈ આવતા જન્મદિવસ નથી</h5>
+                            <p style="font-size:14px;">બધા સભ્યોને શુભેચ્છાઓ! 😊</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

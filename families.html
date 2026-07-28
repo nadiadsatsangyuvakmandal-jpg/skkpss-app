@@ -1,0 +1,741 @@
+{% extends "base.html" %}
+{% block title %}પરિવાર - સમાજ સિસ્ટમ{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== MOBILE-FIRST CARD DESIGN ===== */
+    .family-card {
+        background: white;
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border-left: 4px solid #3b82f6;
+        transition: all 0.3s;
+    }
+    .family-card:active {
+        transform: scale(0.98);
+    }
+    .family-card .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .family-card .name {
+        font-weight: 700;
+        font-size: 16px;
+        color: #1e293b;
+    }
+    .family-card .sub {
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 2px;
+    }
+    .family-card .badge-count {
+        background: #dbeafe;
+        color: #1e40af;
+        padding: 2px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .family-card .details {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e2e8f0;
+    }
+    .family-card .details .item {
+        font-size: 13px;
+    }
+    .family-card .details .item .label {
+        color: #94a3b8;
+        font-size: 11px;
+    }
+    .family-card .details .item .value {
+        font-weight: 600;
+        color: #1e293b;
+    }
+    .family-card .details .item .value.due-positive {
+        color: #dc2626;
+        font-weight: 700;
+    }
+    .family-card .details .item .value.due-clear {
+        color: #059669;
+        font-weight: 700;
+    }
+    .family-card .months {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e2e8f0;
+    }
+    .family-card .months .month-input {
+        text-align: center;
+        font-size: 11px;
+    }
+    .family-card .months .month-input input {
+        width: 100%;
+        padding: 3px 2px;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        font-size: 11px;
+        text-align: center;
+    }
+    .family-card .months .month-input .mlabel {
+        font-size: 9px;
+        color: #94a3b8;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    .family-card .actions {
+        display: flex;
+        gap: 6px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e2e8f0;
+        flex-wrap: wrap;
+    }
+    .family-card .actions .btn-sm {
+        padding: 4px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+        border: none;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .btn-save { background: #10b981; color: white; }
+    .btn-members { background: #f59e0b; color: white; }
+    .btn-edit { background: #3b82f6; color: white; }
+    .btn-delete { background: #ef4444; color: white; }
+    .btn-uif { background: #8b5cf6; color: white; }
+
+    .treasury-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-bottom: 16px;
+    }
+    .treasury-item {
+        background: white;
+        border-radius: 8px;
+        padding: 8px 4px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+    }
+    .treasury-item .month {
+        font-size: 9px;
+        color: #94a3b8;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    .treasury-item .amount {
+        font-size: 14px;
+        font-weight: 700;
+        color: #059669;
+    }
+
+    .search-box {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    .search-box input {
+        flex: 1;
+        padding: 10px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+    .search-box input:focus {
+        border-color: #3b82f6;
+        outline: none;
+    }
+    .search-box .btn {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        color: white;
+        background: #1e293b;
+    }
+    .search-box .btn-clear {
+        background: #e2e8f0;
+        color: #475569;
+    }
+    .header-actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .header-actions .btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        border: none;
+        text-decoration: none;
+        color: white;
+    }
+    .btn-add { background: #10b981; }
+    .btn-pdf { background: #dc2626; }
+    .btn-excel { background: #0891b2; }
+    .btn-newyear { background: #7c3aed; border: none; cursor: pointer; }
+
+    .expand-btn {
+        background: none;
+        border: none;
+        color: #3b82f6;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        padding: 4px 0;
+    }
+    .expand-btn i {
+        transition: transform 0.3s;
+    }
+    .expand-btn.open i {
+        transform: rotate(180deg);
+    }
+    .month-grid {
+        display: none;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        margin-top: 8px;
+    }
+    .month-grid.open {
+        display: grid;
+    }
+
+    /* ===== Compact month picker: pills + single active field ===== */
+    .month-picker-wrap {
+        display: none;
+        margin-top: 8px;
+    }
+    .month-picker-wrap.open {
+        display: block;
+    }
+    .month-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+    .month-pill {
+        border: 1.5px solid #e2e8f0;
+        background: white;
+        border-radius: 14px;
+        padding: 5px 11px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748b;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.15s;
+    }
+    .month-pill.active {
+        background: #1e3a8a;
+        color: white;
+        border-color: #1e3a8a;
+    }
+    .month-pill.filled::after {
+        content: '';
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #059669;
+        border: 1.5px solid white;
+    }
+    .month-active-field {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px 12px;
+    }
+    .month-slot {
+        display: none;
+    }
+    .month-slot.active {
+        display: block;
+    }
+    .month-slot label {
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 5px;
+    }
+    .month-slot input {
+        width: 100%;
+        padding: 9px 10px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+    }
+    .month-slot input:focus {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+
+    /* ===== Year status banner + per-month hint ===== */
+    .year-status-banner {
+        border-radius: 10px;
+        padding: 9px 12px;
+        font-size: 12.5px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .year-status-banner.status-clear {
+        background: #ecfdf5;
+        border: 1.5px solid #6ee7b7;
+        color: #065f46;
+    }
+    .year-status-banner.status-due {
+        background: #fef3c7;
+        border: 1.5px solid #fbbf24;
+        color: #92400e;
+    }
+    .year-status-hint {
+        font-size: 11px;
+        font-weight: 500;
+        margin-top: 4px;
+        opacity: 0.85;
+    }
+    .month-slot-hint {
+        font-size: 11.5px;
+        font-weight: 600;
+        margin-top: 6px;
+        padding: 6px 9px;
+        border-radius: 7px;
+    }
+    .month-slot-hint.hint-paid {
+        background: #ecfdf5;
+        color: #065f46;
+    }
+    .month-slot-hint.hint-covered {
+        background: #eff6ff;
+        color: #1e40af;
+    }
+    .month-slot-hint.hint-empty {
+        background: #f8fafc;
+        color: #94a3b8;
+    }
+
+    /* ===== Year selector + history banner ===== */
+    .year-selector {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .year-pill {
+        border: 1.5px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        border-radius: 20px;
+        padding: 5px 14px;
+        font-size: 12.5px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+    .year-pill.active {
+        background: #4338ca;
+        color: white;
+        border-color: #4338ca;
+    }
+    .year-fix-btn {
+        background: none;
+        border: 1.5px dashed #cbd5e1;
+        color: #94a3b8;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        margin-left: 6px;
+        cursor: pointer;
+    }
+    .year-fix-box {
+        max-width: 320px;
+        margin: 10px auto 0;
+        background: #fffbeb;
+        border: 1.5px solid #fde68a;
+        border-radius: 10px;
+        padding: 10px 12px;
+    }
+    .year-fix-hint {
+        font-size: 11.5px;
+        color: #92400e;
+        margin-bottom: 8px;
+        text-align: left;
+    }
+    .year-fix-box form {
+        display: flex;
+        gap: 6px;
+    }
+    .year-fix-box input {
+        flex: 1;
+        border: 1px solid #fbbf24;
+        border-radius: 6px;
+        padding: 6px 8px;
+        font-size: 13px;
+        text-align: center;
+    }
+    .year-fix-box button {
+        background: #d97706;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+    .history-banner {
+        background: #fef3c7;
+        border: 1.5px solid #fbbf24;
+        color: #92400e;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 16px;
+    }
+    .back-to-current {
+        display: block;
+        margin-top: 6px;
+        color: #1e3a8a;
+        font-weight: 700;
+        text-decoration: underline;
+        font-size: 12.5px;
+    }
+
+    /* ===== Grand total due (UIF + current year due combined) ===== */
+    .grand-due-badge {
+        background: #fee2e2;
+        border: 1.5px solid #fca5a5;
+        color: #991b1b;
+        border-radius: 10px;
+        padding: 8px 12px;
+        text-align: center;
+        font-size: 12.5px;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+    .grand-due-badge .amt { font-size: 16px; }
+
+    /* ===== Read-only month display (for historical years) ===== */
+    .readonly-months-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-top: 8px;
+    }
+    .readonly-month-cell {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 6px 4px;
+        text-align: center;
+    }
+    .readonly-month-cell .rmlabel { font-size: 10px; color: #94a3b8; font-weight: 700; }
+    .readonly-month-cell .rmval { font-size: 12.5px; font-weight: 700; color: #1e293b; margin-top: 2px; }
+    .readonly-month-cell.has-amt { background: #f0fdf4; border-color: #bbf7d0; }
+    .readonly-month-cell.has-amt .rmval { color: #059669; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Active Year + Year Selector -->
+<div style="text-align:center; margin-bottom:10px;">
+    <span style="background:#eef2ff; color:#4338ca; font-weight:700; font-size:13px; padding:5px 14px; border-radius:20px; display:inline-block; margin-bottom:8px;">
+        📅 ચાલુ વર્ષ: {{ active_year }}
+    </span>
+    {% if user_is_treasurer %}
+    <button type="button" class="year-fix-btn" onclick="toggleYearFix()">⚙️ વર્ષ સુધારો</button>
+    {% endif %}
+    {% if available_years|length >= 1 %}
+    <div class="year-selector">
+        {% for y in available_years %}
+        <a href="/families?year={{ y }}{% if search %}&search={{ search }}{% endif %}"
+           class="year-pill {% if y == view_year %}active{% endif %}">{{ y }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div id="yearFixBox" class="year-fix-box" style="display:none;">
+        {% if can_undo_rollover %}
+        <div class="year-fix-hint" style="color:#991b1b;">🔄 તાજેતરમાં "નવું વર્ષ શરૂ કરો" દબાયું છે. જો ભૂલથી થયું હોય તો નીચેના બટનથી બરાબર પાછું લઈ શકાય (UIF માં ઉમેરાયેલી રકમ પણ પાછી લેવાશે).</div>
+        <form method="POST" action="/collection/undo-last-rollover" onsubmit="return confirm('છેલ્લું નવું વર્ષ પાછું લેવું છે? UIF માં ઉમેરાયેલી બાકી રકમ પણ પાછી કપાઈ જશે.')" style="margin-bottom:10px;">
+            <button type="submit" style="width:100%; background:#991b1b;">↩️ છેલ્લું "નવું વર્ષ" પાછું લો</button>
+        </form>
+        {% endif %}
+        <div class="year-fix-hint">⚠️ ભૂલથી ખોટું વર્ષ ચાલુ થઈ ગયું હોય તો અહીં સાચું વર્ષ લખીને સુધારો કરો (દા.ત. 2026)</div>
+        <form method="POST" action="/collection/set-active-year" onsubmit="return confirm('ચાલુ વર્ષ ' + document.getElementById('newYearInput').value + ' કરવું છે?')">
+            <input type="number" id="newYearInput" name="new_year" value="{{ active_year }}" min="2000" max="2100" required>
+            <button type="submit">✔️ સેવ કરો</button>
+        </form>
+    </div>
+</div>
+
+{% if not is_current_year_view %}
+<div class="history-banner">
+    {% if user_is_treasurer %}
+    📜 તમે વર્ષ <strong>{{ view_year }}</strong> નો જૂનો રેકોર્ડ જુઓ છો — તમે (ખજાનચી) આમાં સુધારો કરી શકો છો.
+    {% else %}
+    📜 તમે વર્ષ <strong>{{ view_year }}</strong> નો જૂનો રેકોર્ડ જોઈ રહ્યા છો (ફક્ત જોવા માટે, એડિટ થશે નહીં)
+    {% endif %}
+    <a href="/families?year={{ active_year }}" class="back-to-current">ચાલુ વર્ષ ({{ active_year }}) પર પાછા જાઓ →</a>
+    {% if user_is_treasurer %}
+    <form method="POST" action="/collection/delete-year" style="margin-top:8px;" onsubmit="return confirm('વર્ષ {{ view_year }} નો બધો રેકોર્ડ કાયમ માટે ડિલીટ કરવો છે? આ પાછું નહીં આવે.')">
+        <input type="hidden" name="year_to_delete" value="{{ view_year }}">
+        <button type="submit" style="background:#dc2626; color:white; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700;">🗑️ વર્ષ {{ view_year }} ડિલીટ કરો</button>
+    </form>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Treasury -->
+ <!-- Direct WhatsApp Report Button with Month Details -->
+{% if session.get('role') != 'farm_head' %}
+<div style="margin: 15px 0; text-align: right;">
+    <a href="https://wa.me/?text=🙏%20જય%20શ્રી%20સ્વામિનારાયણ%0A%0A📊%20*શ્રી%20કચ્છ%20કડવા%20પાટીદાર%20સત્સંગ%20સમાજ*%0A📅%20આ%20મહિનાનું%20({{ current_month_name }}):%0A💰%20*કુલ%20કલેક્શન%20રકમ:*%20*₹{{ current_month_collection|int }}*%0A%0Aતમને%20જમા%20કરાવેલ%20છે%20જેની%20નોંધ%20કરી%20લેશો" 
+       target="_blank" 
+       class="btn btn-success btn-sm" 
+       style="background: #25D366; border: none; font-weight: 600; padding: 8px 16px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <i class="fab fa-whatsapp"></i> WhatsApp પર ચાલુ મહિનાનો રિપોર્ટ મોકલો
+    </a>
+</div>
+{% endif %}
+
+<div class="treasury-grid">
+    {% for i in range(1, 13) %}
+    <div class="treasury-item">
+        <div class="month">{{ ['JAN','FEB','MAR','APR','MAY','JUNE','JUL','AUG','SEP','OCT','NOV','DEC'][loop.index0] }}</div>
+        <div class="amount">₹{{ treasury[i]|int if treasury[i] else '0' }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Search -->
+<div class="search-box">
+    <form method="GET" style="display:flex; gap:8px; width:100%;">
+        <input type="text" name="search" placeholder="ફાર્મ અથવા પરિવાર શોધો..." value="{{ search }}">
+        <button type="submit" class="btn">🔍</button>
+        {% if search %}<a href="/families" class="btn btn-clear">✕</a>{% endif %}
+    </form>
+</div>
+
+<!-- Header Actions -->
+<!-- Header Actions -->
+<div class="header-actions" style="margin-bottom:16px;">
+    {% if user_is_treasurer %}
+    <a href="/family/add" class="btn btn-add">➕ નવો</a>
+    <a href="/collection/export/pdf" class="btn btn-pdf">📄 PDF</a>
+    <a href="/collection/export/excel" class="btn btn-excel">📊 Excel</a>
+    {% endif %}
+    <a href="/house-list" class="btn" style="background:#4338ca;">🏠 ચૂલા યાદી</a>
+    <a href="/" class="btn" style="background:#64748b;">🏠 હોમ</a>
+    {% if is_current_year_view and user_is_treasurer %}
+    <form method="POST" action="/collection/start-new-year" style="display:inline;" onsubmit="return confirmNewYear()">
+        <button type="submit" class="btn btn-newyear">🎊 નવું વર્ષ શરૂ કરો</button>
+    </form>
+    {% endif %}
+</div>
+
+<!-- Family Cards -->
+{% for f in families %}
+<div class="family-card">
+    <div class="header">
+        <div>
+            <div class="name">{{ f.firm_name }}</div>
+            <div class="sub">{{ f.family_name }} • 📱 {{ f.mobile }}</div>
+        </div>
+        <span class="badge-count">👥 {{ f.total_members }}</span>
+    </div>
+
+    <div class="details">
+        <div class="item">
+            <div class="label">₹ 50</div>
+            <div class="value">₹{{ f.total_rs }}</div>
+        </div>
+        <div class="item">
+            <div class="label">UIF</div>
+            <div class="value">₹{{ f.uif|clean_amt }}</div>
+        </div>
+        <div class="item">
+            <div class="label">{% if is_current_year_view %}કુલ બાકી{% else %}બાકી{% endif %}</div>
+            {% if is_current_year_view %}
+                {% if f.grand_total_due > 0 %}
+                <div class="value due-positive">₹{{ f.grand_total_due|int }}</div>
+                {% else %}
+                <div class="value due-clear">✅ ચૂકવેલ</div>
+                {% endif %}
+            {% else %}
+                {% if f.due_amount > 0 %}
+                <div class="value due-positive">₹{{ f.due_amount|int }}</div>
+                {% else %}
+                <div class="value due-clear">✅ ચૂકવેલ</div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    {% if is_current_year_view %}
+    <div style="text-align:center; font-size:10.5px; color:#94a3b8; margin-top:2px;">
+        (કુલ દેવું: જૂનું UIF ₹{{ f.uif|clean_amt }} + આ વર્ષની ફી ₹{{ f.annual_expected|int }} — જમા થયેલ ₹{{ f.annual_paid|int }} બાદ)
+    </div>
+    {% endif %}
+
+    {% if user_is_treasurer %}
+    <form action="/collection/update/{{ f.id }}" method="POST">
+        <input type="hidden" name="target_year" value="{{ view_year }}">
+        <input type="hidden" name="search" value="{{ search }}">
+        <button type="button" class="expand-btn" onclick="toggleMonths(this)">
+            📅 {{ view_year }} નું માસિક કલેક્શન <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="month-picker-wrap" data-id="{{ f.id }}">
+            <div class="year-status-banner {% if f.due_amount <= 0 %}status-clear{% else %}status-due{% endif %}">
+                {% if f.due_amount <= 0 %}
+                ✅ આખા વર્ષની ફી ભરાઈ ગઈ છે — ₹{{ f.annual_paid|int }} / ₹{{ f.annual_expected|int }}
+                {% else %}
+                ⚠️ કુલ ભરેલ ₹{{ f.annual_paid|int }} / જોઈએ ₹{{ f.annual_expected|int }} — ₹{{ f.due_amount|int }} બાકી
+                {% endif %}
+                <div class="year-status-hint">💡 કોઈ પણ મહિનામાં એકસાથે આખા વર્ષની રકમ ભરી શકાય — બીજા મહિનાના ખાના ખાલી હોય તો પણ ચિંતા નહીં.</div>
+            </div>
+            <div class="month-pills">
+                {% set month_labels = ['JAN','FEB','MAR','APR','MAY','JUNE','JUL','AUG','SEP','OCT','NOV','DEC'] %}
+                {% for amt in f.amounts %}
+                <button type="button"
+                        class="month-pill {% if loop.first %}active{% endif %} {% if amt and amt|float > 0 %}filled{% endif %}"
+                        data-idx="{{ loop.index0 }}"
+                        onclick="selectMonth({{ f.id }}, {{ loop.index0 }})">{{ month_labels[loop.index0] }}</button>
+                {% endfor %}
+            </div>
+            <div class="month-active-field">
+                {% set month_keys = ['jan','feb','mar','apr','may','june','jul','aug','sep','oct','nov','dec'] %}
+                {% for amt in f.amounts %}
+                <div class="month-slot {% if loop.first %}active{% endif %}" data-idx="{{ loop.index0 }}" data-famid="{{ f.id }}">
+                    <label>{{ month_labels[loop.index0] }} નું કલેક્શન (₹)</label>
+                    <input type="number" name="{{ month_keys[loop.index0] }}_{{ f.id }}" value="{{ amt|clean_amt }}" placeholder="0">
+                    {% if amt and amt|float > 0 %}
+                    <div class="month-slot-hint hint-paid">✅ આ મહિનામાં ₹{{ amt|int }} નોંધાયેલ છે</div>
+                    {% elif f.due_amount <= 0 %}
+                    <div class="month-slot-hint hint-covered">✅ આ મહિનાનું ખાનું ખાલી છે, પણ પરિવારે બીજા મહિનામાં આખા વર્ષની રકમ ભરી દીધેલી હોવાથી બાકી નથી</div>
+                    {% else %}
+                    <div class="month-slot-hint hint-empty">⚪ આ મહિનામાં કંઈ નોંધાયેલ નથી</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- UIF Input -->
+        <div style="margin-top:8px;">
+            {% if is_current_year_view %}
+            <input type="number" name="uif_{{ f.id }}" value="{{ f.uif|clean_amt }}" placeholder="UIF" style="width:80px; padding:4px 6px; border:1px solid #e2e8f0; border-radius:4px; font-size:13px;">
+            {% else %}
+            <span style="font-size:11px; color:#94a3b8;">UIF ફક્ત ચાલુ વર્ષમાં જ બદલી શકાય (₹{{ f.uif|clean_amt }})</span>
+            {% endif %}
+            <button type="submit" class="btn-sm btn-save">💾 સેવ</button>
+        </div>
+    </form>
+    {% else %}
+    <!-- Monthly view (read-only — non-treasurer viewer) -->
+    <button type="button" class="expand-btn" onclick="toggleMonths(this)">
+        📅 {{ view_year }} નું કલેક્શન (ફક્ત જોવા માટે) <i class="fas fa-chevron-down"></i>
+    </button>
+    <div class="month-picker-wrap" data-id="ro{{ f.id }}">
+        <div class="readonly-months-grid">
+            {% set month_labels = ['JAN','FEB','MAR','APR','MAY','JUNE','JUL','AUG','SEP','OCT','NOV','DEC'] %}
+            {% for amt in f.amounts %}
+            <div class="readonly-month-cell {% if amt and amt|float > 0 %}has-amt{% endif %}">
+                <div class="rmlabel">{{ month_labels[loop.index0] }}</div>
+                <div class="rmval">₹{{ amt|int if amt else 0 }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="actions">
+        <a href="/family/{{ f.id }}/members" class="btn-sm btn-members">👥 સભ્યો</a>
+        <a href="/family/edit/{{ f.id }}" class="btn-sm btn-edit">✏️</a>
+        <a href="/family/delete/{{ f.id }}" class="btn-sm btn-delete" onclick="return confirm('કાઢી નાખવો?')">🗑️</a>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+    <i class="fas fa-users fa-3x d-block mb-3" style="color:#d1d5db;"></i>
+    <h5>કોઈ પરિવાર નથી</h5>
+    <a href="/family/add" class="btn btn-add">➕ પહેલો પરિવાર ઉમેરો</a>
+</div>
+{% endfor %}
+
+<!-- Stats -->
+<div class="row mt-3 g-2">
+    <div class="col-4 col-md">
+        <div class="alert alert-info text-center mb-0" style="padding:8px; font-size:12px;">
+            <div>👥</div>
+            <strong>{{ total_page_members }}</strong>
+        </div>
+    </div>
+    <div class="col-4 col-md">
+        <div class="alert alert-success text-center mb-0" style="padding:8px; font-size:12px;">
+            <div>₹</div>
+            <strong>₹{{ total_page_rs }}</strong>
+        </div>
+    </div>
+    <div class="col-4 col-md">
+        <div class="alert alert-warning text-center mb-0" style="padding:8px; font-size:12px;">
+            <div>UIF</div>
+            <strong>₹{{ total_page_uif|int }}</strong>
+        </div>
+    </div>
+    <div class="col-4 col-md">
+        <div class="alert text-center mb-0" style="padding:8px; font-size:12px; background:#fee2e2; color:#dc2626; border-color:#fecaca;">
+            <div>{% if is_current_year_view %}કુલ બાકી{% else %}{{ view_year }} બાકી{% endif %}</div>
+            <strong>₹{% if is_current_year_view %}{{ total_page_grand_due|int }}{% else %}{{ total_page_due|int }}{% endif %}</strong>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleYearFix() {
+    var box = document.getElementById('yearFixBox');
+    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+}
+
+function confirmNewYear() {
+    return confirm('🎊 શું તમે નવું વર્ષ શરૂ કરવા માંગો છો?\n\nઆનાથી:\n- દરેક પરિવારની બાકી રકમ UIF માં ઉમેરાઈ જશે\n- જાન્યુઆરીથી ડિસેમ્બરના ખાના નવા વર્ષ માટે ખાલી થશે\n- જૂના વર્ષનો સંપૂર્ણ રેકોર્ડ સચવાઈ રહેશે (ડિલીટ નહીં થાય)\n\nઆગળ વધવું છે?');
+}
+
+function toggleMonths(btn) {
+    const wrap = btn.nextElementSibling;
+    wrap.classList.toggle('open');
+    btn.classList.toggle('open');
+}
+
+function selectMonth(famId, idx) {
+    document.querySelectorAll('.month-picker-wrap[data-id="' + famId + '"] .month-pill').forEach(function(p) {
+        p.classList.toggle('active', p.dataset.idx == idx);
+    });
+    document.querySelectorAll('.month-slot[data-famid="' + famId + '"]').forEach(function(s) {
+        s.classList.toggle('active', s.dataset.idx == idx);
+    });
+}
+</script>
+{% endblock %}

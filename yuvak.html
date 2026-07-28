@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+{% block title %}યુવક મંડળ - સમાજ સિસ્ટમ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .yuvak-card {
+        background: white;
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border-left: 4px solid #10b981;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+    .yuvak-card .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #d1fae5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 700;
+        color: #065f46;
+        flex-shrink: 0;
+    }
+    .yuvak-card .avatar img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .yuvak-card .info {
+        flex: 1;
+        min-width: 0;
+    }
+    .yuvak-card .info .name {
+        font-weight: 700;
+        font-size: 15px;
+        color: #1e293b;
+    }
+    .yuvak-card .info .meta {
+        font-size: 12px;
+        color: #64748b;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .yuvak-card .info .meta .tag {
+        background: #f1f5f9;
+        padding: 0 8px;
+        border-radius: 12px;
+    }
+    .yuvak-card .actions {
+        display: flex;
+        gap: 4px;
+        flex-shrink: 0;
+    }
+    .yuvak-card .actions .btn-sm {
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        border: none;
+        text-decoration: none;
+        color: white;
+    }
+    .btn-edit-y { background: #f59e0b; }
+    .btn-del-y { background: #ef4444; }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    .stats-row .stat {
+        background: white;
+        border-radius: 10px;
+        padding: 10px 6px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+    }
+    .stats-row .stat .num {
+        font-size: 18px;
+        font-weight: 800;
+        color: #1e293b;
+    }
+    .stats-row .stat .label {
+        font-size: 10px;
+        color: #94a3b8;
+        text-transform: uppercase;
+    }
+    .search-box-y {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    .search-box-y input {
+        flex: 1;
+        padding: 10px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+    .search-box-y input:focus {
+        border-color: #10b981;
+        outline: none;
+    }
+    .search-box-y .btn {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        color: white;
+        background: #1e293b;
+    }
+    .header-actions-y {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+    .header-actions-y .btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        border: none;
+        text-decoration: none;
+        color: white;
+    }
+    .btn-add-y { background: #10b981; }
+    .btn-pdf-y { background: #dc2626; }
+    .btn-excel-y { background: #0891b2; }
+    .exec-badge {
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .exec-yes { background: #dcfce7; color: #065f46; }
+    .exec-no { background: #fef2f2; color: #dc2626; }
+
+    .join-banner {
+        background: linear-gradient(135deg, #065f46, #10b981);
+        color: white;
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        text-align: center;
+    }
+    .join-banner .link-box {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.12);
+        padding: 6px 12px;
+        border-radius: 50px;
+        width: 100%;
+    }
+    .join-banner .link-box a {
+        color: #fcd34d;
+        font-size: 12px;
+        word-break: break-all;
+        text-decoration: none;
+    }
+    .join-banner .btn-copy {
+        background: #fcd34d;
+        color: #065f46;
+        border: none;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+    }
+    .join-banner .btn-wa {
+        background: #25D366;
+        color: white;
+        border: none;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 12px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Stats -->
+<div class="stats-row">
+    <div class="stat">
+        <div class="num">{{ total_yuvak_count if total_yuvak_count is defined else yuvaks|length }}</div>
+        <div class="label">કુલ</div>
+    </div>
+    <a href="/yuvak?filter=karobari" style="text-decoration: none; color: inherit;">
+        <div class="stat" style="cursor: pointer;">
+            <div class="num">{{ total_karobari_count if total_karobari_count is defined else 0 }}</div>
+            <div class="label">કારોબારી</div>
+        </div>
+    </a>
+    <div class="stat">
+        <div class="num">₹{{ total_fee_sum if total_fee_sum is defined else 0 }}</div>
+        <div class="label">કુલ ફી</div>
+    </div>
+    <div class="stat">
+        <div class="num">{{ avg_age if avg_age is defined else '—' }}</div>
+        <div class="label">ઉંમર</div>
+    </div>
+</div>
+
+<!-- Search -->
+<div class="search-box-y">
+    <form method="GET" style="display:flex; gap:8px; width:100%;">
+        <input type="text" name="search" placeholder="નામ અથવા મોબાઈલ શોધો..." value="{{ search }}">
+        <button type="submit" class="btn">🔍</button>
+        {% if search %}<a href="/yuvak" class="btn" style="background:#e2e8f0;color:#475569;">✕</a>{% endif %}
+    </form>
+</div>
+
+<!-- Header Actions -->
+<div class="header-actions-y">
+    <a href="/" class="btn" style="background:#64748b;">🏠 હોમ</a>
+    <a href="/yuvak/add" class="btn btn-add-y">➕ નવો</a>
+    <a href="/yuvak/export/pdf" class="btn btn-pdf-y">📄 PDF</a>
+    <a href="/yuvak/export/excel" class="btn btn-excel-y">📊 Excel</a>
+</div>
+
+<!-- Yuvak Cards -->
+{% for y in yuvaks %}
+<div class="yuvak-card">
+    <div class="avatar">
+        {% if y.photo %}
+        <img src="{{ y.photo }}" alt="{{ y.name }}" onerror="this.style.display='none';this.parentElement.textContent='{{ y.name[0]|upper }}';">
+        {% else %}
+        {{ y.name[0]|upper }}
+        {% endif %}
+    </div>
+    <div class="info">
+        <div class="name">{{ y.name }}</div>
+        <div class="meta">
+            <span>📱 {{ y.mobile }}</span>
+            <span class="tag">🎂 {{ y.bdate }}</span>
+            <span class="tag">⏳ {{ y.age }}</span>
+            <span class="exec-badge {{ 'exec-yes' if y.exec == 'હા' else 'exec-no' }}">{{ y.exec }}</span>
+        </div>
+        <div style="font-size:12px; color:#64748b; margin-top:2px;">
+            {{ y.address or '' }}{% if y.education %} • {{ y.education }}{% endif %}{% if y.hobby %} • {{ y.hobby }}{% endif %}
+        </div>
+        <div style="font-size:13px; font-weight:700; color:#059669;">₹{{ y.fee|clean_amt }}</div>
+    </div>
+    <div class="actions">
+        <a href="/yuvak/edit/{{ y.id }}" class="btn-sm btn-edit-y">✏️</a>
+        <a href="/yuvak/delete/{{ y.id }}" class="btn-sm btn-del-y" onclick="return confirm('કાઢી નાખવો?')">🗑️</a>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+    <i class="fas fa-user-graduate fa-3x d-block mb-3" style="color:#d1d5db;"></i>
+    <h5>કોઈ યુવક નથી</h5>
+    <a href="/yuvak/add" class="btn btn-add-y">➕ પહેલો યુવક ઉમેરો</a>
+</div>
+{% endfor %}
+
+<!-- Join Banner -->
+<div class="join-banner">
+    <div style="font-weight:700;">🔗 યુવક મંડળમાં જોડાઓ</div>
+    <div class="link-box">
+        <a href="https://satsangyuvakmandal.pythonanywhere.com/yuvak/join" target="_blank">
+            satsangyuvakmandal.pythonanywhere.com/yuvak/join
+        </a>
+        <button class="btn-copy" onclick="copyJoinLink()">📋 કોપી</button>
+        <a href="https://wa.me/?text=🚩%20યુવક%20મંડળમાં%20જોડાઓ%20👇%0Ahttps://satsangyuvakmandal.pythonanywhere.com/yuvak/join" target="_blank" class="btn-wa">💬 WhatsApp</a>
+    </div>
+</div>
+
+<script>
+function copyJoinLink() {
+    const link = 'https://satsangyuvakmandal.pythonanywhere.com/yuvak/join';
+    navigator.clipboard.writeText(link).then(() => alert('✅ લિંક કોપી થઈ!')).catch(() => {
+        const input = document.createElement('input');
+        input.value = link;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('✅ લિંક કોપી થઈ!');
+    });
+}
+</script>
+{% endblock %}

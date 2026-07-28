@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}એન્ટ્રીઝ - {{ event_name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+            <h4><i class="fas fa-list me-2"></i> {{ event_name }}</h4>
+            <small>
+                <i class="fas fa-tag me-1"></i> પ્રકાર: 
+                {% if event_type == 'culture' %}🎭 સાંસ્કૃતિક
+                {% elif event_type == 'saraswati' %}📚 સરસ્વતી
+                {% elif event_type == 'jamvanu' %}🍽️ જમવાનું
+                {% else %}{{ event_type }}{% endif %}
+            </small>
+        </div>
+        <div>
+            <span class="badge bg-success fs-6 me-2">
+                <i class="fas fa-users me-1"></i> કુલ હેડ કાઉન્ટ: {{ total_head_count }}
+            </span>
+            <a href="/event/{{ event_id }}/export/pdf" class="btn btn-danger me-2">
+                <i class="fas fa-file-pdf me-1"></i> PDF
+            </a>
+            <a href="/event/{{ event_id }}/export/excel" class="btn btn-info text-white me-2">
+                <i class="fas fa-file-excel me-1"></i> Excel
+            </a>
+            <a href="/events" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i> પાછા
+            </a>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        {% if entries %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>ક્રમ</th>
+                        <th>પરિવાર</th>
+                        <th>સભ્ય</th>
+                        <th>મોબાઈલ</th>
+                        <th>હેડ કાઉન્ટ</th>
+                        <th>વસ્તુ</th>
+                        <th>પ્રકાર</th>
+                        <th>સહભાગીઓ</th>
+                        <th>ફાઈલ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in entries %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ entry.firm_name }}</strong></td>
+                        <td>{{ entry.member_name }}</td>
+                        <td>{{ entry.mobile_number or '-' }}</td>
+                        <td>
+                            {% if entry.head_count > 0 %}
+                                <span class="badge bg-primary fs-6">{{ entry.head_count }}</span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ entry.item_name or '-' }}</td>
+                        <td>
+                            {% if entry.performance_type == 'culture' %}
+                                <span class="badge-culture badge">🎭 Culture</span>
+                            {% elif entry.performance_type == 'saraswati' %}
+                                <span class="badge-saraswati badge">📚 Saraswati</span>
+                            {% elif entry.performance_type == 'jamvanu' %}
+                                <span class="badge-jamvanu badge">🍽️ Jamvanu</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ entry.performance_type or '-' }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if entry.participants_count %}
+                                <span class="badge bg-primary">{{ entry.participants_count }}</span>
+                                {% if entry.participants_names %}
+                                    <br><small class="text-muted">{{ entry.participants_names[:30] }}</small>
+                                {% endif %}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if entry.file_path %}
+                            <div class="d-flex flex-column align-items-center">
+                                {% set ext = entry.file_path.split('.')[-1].lower() %}
+                                {% if ext in ['jpg','jpeg','png','gif','webp'] %}
+                                    <a href="{{ entry.file_path }}" target="_blank">
+                                        <img src="{{ entry.file_path }}" style="max-width:60px; max-height:60px; border-radius:6px;">
+                                    </a>
+                                {% elif ext in ['mp3','wav','ogg'] %}
+                                    <audio controls style="width:100px; height:30px;">
+                                        <source src="{{ entry.file_path }}">
+                                    </audio>
+                                {% elif ext in ['mp4','webm','mov'] %}
+                                    <video controls style="max-width:100px; max-height:60px;">
+                                        <source src="{{ entry.file_path }}">
+                                    </video>
+                                {% elif ext == 'pdf' %}
+                                    <a href="{{ entry.file_path }}" target="_blank" style="font-size:30px; color:#dc3545;">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
+                                {% else %}
+                                    <a href="{{ entry.file_path }}" target="_blank" style="font-size:24px;">
+                                        <i class="fas fa-file"></i>
+                                    </a>
+                                {% endif %}
+                                <a href="{{ entry.file_path }}" target="_blank" style="font-size:11px;">
+                                    <i class="fas fa-external-link-alt"></i> જુઓ
+                                </a>
+                            </div>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="table-warning fw-bold">
+                        <td colspan="4" class="text-end">કુલ હેડ કાઉન્ટ:</td>
+                        <td><span class="badge bg-success fs-6">{{ total_head_count }}</span></td>
+                        <td colspan="4"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="p-3 bg-light border-top d-flex justify-content-between">
+            <span class="text-muted"><i class="fas fa-users me-1"></i> કુલ એન્ટ્રીઝ: <strong>{{ entries|length }}</strong></span>
+            <span class="text-success fw-bold"><i class="fas fa-user me-1"></i> કુલ હેડ કાઉન્ટ: <strong>{{ total_head_count }}</strong></span>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="fas fa-inbox fa-3x d-block mb-3"></i>
+            <h5>કોઈ એન્ટ્રી નથી</h5>
+            <p>આ ઇવેન્ટ માટે હજુ સુધી કોઈ RSVP સબમિટ થયું નથી.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
