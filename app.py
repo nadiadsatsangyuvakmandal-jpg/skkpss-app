@@ -83,6 +83,9 @@ def guj_mix(text):
         out.append(f'<font name="{f}">{_saxutils.escape(chunk)}</font>')
     return ''.join(out)
 
+# ============================================================
+# DATABASE INITIALIZATION
+# ============================================================
 def init_db():
     conn = sqlite3.connect("samaj.db")
     cursor = conn.cursor()
@@ -115,7 +118,7 @@ def init_db():
     try:
         cursor.execute("ALTER TABLE family_members ADD COLUMN blood_group TEXT;")
     except Exception:
-        pass # જો કોલમ પહેલેથી હશે તો કોઈ એરર નહીં આવે
+        pass  # જો કોલમ પહેલેથી હશે તો કોઈ એરર નહીં આવે
 
     # 3. જો admin યુઝર પહેલેથી ન હોય તો બનાવો, અથવા હોય તો પાસવર્ડ અને રોલ ફિક્સ કરો
     cursor.execute("SELECT id FROM users WHERE username = 'admin'")
