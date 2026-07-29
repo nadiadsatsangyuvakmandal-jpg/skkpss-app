@@ -91,7 +91,7 @@ def init_db():
     cursor = conn.cursor()
     cursor.execute("PRAGMA busy_timeout = 30000")
     
-    # 1. users ટેબલ ચેક કરો અને જો ન હોય તો બનાવો
+    # 1. users ટેબલ
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -101,6 +101,30 @@ def init_db():
             family_id INTEGER
         )
     """)
+
+    # 2. family_members ટેબલ (જેમાં blood_group કોલમ હોવું ફરજિયાત છે)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS family_members (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            family_id INTEGER,
+            name TEXT,
+            blood_group TEXT,
+            mobile TEXT,
+            business_study TEXT
+        )
+    """)
+    
+    # જો ટેબલ પહેલેથી જ જૂનું હોય અને તેમાં blood_group કોલમ ન હોય, તો આ સેફ્ટી માટે:
+    try:
+        cursor.execute("ALTER TABLE family_members ADD COLUMN blood_group TEXT;")
+    except Exception:
+        pass # જો કોલમ પહેલેથી હશે તો કોઈ એરર નહીં આવે
+
+    conn.commit()
+    conn.close()
+
+# એપ શરૂ થાય ત્યારે આ ડેટાબેઝ ઇનિશિયલાઇઝેશન ફંક્શન અચૂક કોલ કરવું
+init_db()
     
     # 2. જો admin યુઝર પહેલેથી ન હોય તો બનાવો, અથવા હોય તો પાસવર્ડ અને રોલ ફિક્સ કરો
     cursor.execute("SELECT id FROM users WHERE username = 'admin'")
