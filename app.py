@@ -15,6 +15,22 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+# ગુજરાતી ફોન્ટ રજિસ્ટર કરો (તમારા કમ્પ્યુટરમાંથી Shruti કે NotoSansGujarati ફાઇલ પ્રોજેક્ટમાં મૂકવી)
+try:
+    # ઉદાહરણ તરીકે Windows માંથી Shruti ફોન્ટ રજિસ્ટર કરવો
+    pdfmetrics.registerFont(TTFont('Gujarati', 'Shruti.ttf'))
+except:
+    pass
+
+# ગ્લોબલ ગુજરાતી સ્ટાઇલ (જ્યાં પણ PDF માં ગુજરાતી પ્રિન્ટ કરવું હોય ત્યાં આ વાપરવું)
+styles = getSampleStyleSheet()
+gujarati_style = ParagraphStyle(
+    'GujaratiText',
+    parent=styles['Normal'],
+    fontName='Gujarati',
+    fontSize=10,
+    leading=14
+)
 
 app = Flask(__name__)
 app.secret_key = "samaj_central_system_2026"
@@ -91,27 +107,32 @@ def init_db():
     cursor = conn.cursor()
     cursor.execute("PRAGMA busy_timeout = 30000")
     
-    # ... ટેબલ બનાવવાનો કોડ ...
+    # 1. users ટેબલ ચેક કરો અને જો ન હોય તો બનાવો
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            username TEXT, 
+            password TEXT,
+            role TEXT DEFAULT 'treasurer',
+            family_id INTEGER
+        )
+    """)
     
-    # admin યુઝર ચેક કરો
+    # 2. જો admin યુઝર પહેલેથી ન હોય તો બનાવો, અથવા હોય તો પાસવર્ડ અને રોલ ફિક્સ કરો
     cursor.execute("SELECT id FROM users WHERE username = 'admin'")
-    if not cursor.fetchone():          # ← આ લાઇન 4 જગ્યાએ
+    if not cursor.fetchone():
         cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-                       ('admin', '210784', 'treasurer'))  # ← આ 8 જગ્યાએ
-    else:                               # ← આ 4 જગ્યાએ
-        cursor.execute("UPDATE users SET password='210784', role='treasurer' WHERE username='admin'")  # ← આ 8 જગ્યાએ
-
-    conn.commit()
-    conn.close()
-
-# એપ શરૂ થાય ત્યારે ફંક્શન કૉલ કરો
-init_db()  # ← આ લાઇન શૂન્ય જગ્યાએ (લાઇન 144 હવે અહીં નથી)
-    
-    conn.commit()
-    conn.close()
+                       ('admin', '210784', 'treasurer'))
+    else:
+        cursor.execute("UPDATE users SET password='210784', role='treasurer' WHERE username='admin'",)
     
     try:
         cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'treasurer'")
+    except Exception as e:
+        pass
+        
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN family_id INTEGER")
     except Exception as e:
         pass
 
