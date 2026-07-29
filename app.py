@@ -91,62 +91,22 @@ def init_db():
     cursor = conn.cursor()
     cursor.execute("PRAGMA busy_timeout = 30000")
     
-    # 1. users ટેબલ ચેક કરો અને જો ન હોય તો બનાવો
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT, 
-            username TEXT, 
-            password TEXT,
-            role TEXT DEFAULT 'treasurer',
-            family_id INTEGER
-        )
-    """)
-
-    # 2. family_members ટેબલ
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS family_members (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            family_id INTEGER,
-            name TEXT,
-            blood_group TEXT,
-            mobile TEXT,
-            business_study TEXT
-        )
-    """)
+    # ... ટેબલ બનાવવાનો કોડ ...
     
-    # જો ટેબલ પહેલેથી જ જૂનું હોય અને તેમાં blood_group કોલમ ન હોય, તો આ સેફ્ટી માટે:
-    try:
-        cursor.execute("ALTER TABLE family_members ADD COLUMN blood_group TEXT;")
-    except Exception:
-        pass  # જો કોલમ પહેલેથી હશે તો કોઈ એરર નહીં આવે
-
-    # role કોલમ ઉમેરો (જો ન હોય તો)
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'treasurer'")
-    except Exception:
-        pass  # જો કોલમ પહેલેથી હશે તો કોઈ એરર નહીં આવે
-
-    # 3. જો admin યુઝર પહેલેથી ન હોય તો બનાવો, અથવા હોય તો પાસવર્ડ અને રોલ ફિક્સ કરો
+    # admin યુઝર ચેક કરો
     cursor.execute("SELECT id FROM users WHERE username = 'admin'")
-    if not cursor.fetchone():
+    if not cursor.fetchone():          # ← આ લાઇન 4 જગ્યાએ
         cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-                       ('admin', '210784', 'treasurer'))
-    else:
-        cursor.execute("UPDATE users SET password='210784', role='treasurer' WHERE username='admin'")
+                       ('admin', '210784', 'treasurer'))  # ← આ 8 જગ્યાએ
+    else:                               # ← આ 4 જગ્યાએ
+        cursor.execute("UPDATE users SET password='210784', role='treasurer' WHERE username='admin'")  # ← આ 8 જગ્યાએ
 
     conn.commit()
     conn.close()
 
-# એપ શરૂ થાય ત્યારે આ ડેટાબેઝ ઇનિશિયલાઇઝેશન ફંક્શન અચૂક કોલ કરવું
-init_db()
+# એપ શરૂ થાય ત્યારે ફંક્શન કૉલ કરો
+init_db()  # ← આ લાઇન શૂન્ય જગ્યાએ (લાઇન 144 હવે અહીં નથી)
     
-    # 3. જો admin યુઝર પહેલેથી ન હોય તો બનાવો, અથવા હોય તો પાસવર્ડ અને રોલ ફિક્સ કરોcursor.execute("SELECT id FROM users WHERE username = 'admin'")
-    if not cursor.fetchone():
-        cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-                       ('admin', '210784', 'treasurer'))
-    else:
-        cursor.execute("UPDATE users SET password='210784', role='treasurer' WHERE username='admin'")
-
     conn.commit()
     conn.close()
     
