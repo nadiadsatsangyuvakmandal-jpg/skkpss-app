@@ -91,7 +91,7 @@ def init_db():
     cursor = conn.cursor()
     cursor.execute("PRAGMA busy_timeout = 30000")
     
-    # 1. users ટેબલ
+    # 1. users ટેબલ ચેક કરો અને જો ન હોય તો બનાવો
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -102,7 +102,7 @@ def init_db():
         )
     """)
 
-    # 2. family_members ટેબલ (જેમાં blood_group કોલમ હોવું ફરજિયાત છે)
+    # 2. family_members ટેબલ
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS family_members (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -119,6 +119,14 @@ def init_db():
         cursor.execute("ALTER TABLE family_members ADD COLUMN blood_group TEXT;")
     except Exception:
         pass # જો કોલમ પહેલેથી હશે તો કોઈ એરર નહીં આવે
+
+    # 3. જો admin યુઝર પહેલેથી ન હોય તો બનાવો, અથવા હોય તો પાસવર્ડ અને રોલ ફિક્સ કરો
+    cursor.execute("SELECT id FROM users WHERE username = 'admin'")
+    if not cursor.fetchone():
+        cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+                       ('admin', '210784', 'treasurer'))
+    else:
+        cursor.execute("UPDATE users SET password='210784', role='treasurer' WHERE username='admin'")
 
     conn.commit()
     conn.close()
