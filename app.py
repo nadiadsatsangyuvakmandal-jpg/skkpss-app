@@ -120,6 +120,12 @@ def init_db():
     except Exception:
         pass  # જો કોલમ પહેલેથી હશે તો કોઈ એરર નહીં આવે
 
+    # role કોલમ ઉમેરો (જો ન હોય તો)
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'treasurer'")
+    except Exception:
+        pass  # જો કોલમ પહેલેથી હશે તો કોઈ એરર નહીં આવે
+
     # 3. જો admin યુઝર પહેલેથી ન હોય તો બનાવો, અથવા હોય તો પાસવર્ડ અને રોલ ફિક્સ કરો
     cursor.execute("SELECT id FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
@@ -146,11 +152,6 @@ init_db()
     
     try:
         cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'treasurer'")
-    except Exception as e:
-        pass
-        
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN family_id INTEGER")
     except Exception as e:
         pass
 
