@@ -83,9 +83,6 @@ def guj_mix(text):
         out.append(f'<font name="{f}">{_saxutils.escape(chunk)}</font>')
     return ''.join(out)
 
-# ============================================================
-# DATABASE INITIALIZATION
-# ============================================================
 def init_db():
     conn = sqlite3.connect("samaj.db")
     cursor = conn.cursor()
@@ -134,8 +131,7 @@ def init_db():
 # એપ શરૂ થાય ત્યારે આ ડેટાબેઝ ઇનિશિયલાઇઝેશન ફંક્શન અચૂક કોલ કરવું
 init_db()
     
-    # 3. જો admin યુઝર પહેલેથી ન હોય તો બનાવો, અથવા હોય તો પાસવર્ડ અને રોલ ફિક્સ કરો
-    cursor.execute("SELECT id FROM users WHERE username = 'admin'")
+    # 3. જો admin યુઝર પહેલેથી ન હોય તો બનાવો, અથવા હોય તો પાસવર્ડ અને રોલ ફિક્સ કરોcursor.execute("SELECT id FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
         cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
                        ('admin', '210784', 'treasurer'))
