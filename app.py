@@ -134,13 +134,16 @@ def init_db():
 # એપ શરૂ થાય ત્યારે આ ડેટાબેઝ ઇનિશિયલાઇઝેશન ફંક્શન અચૂક કોલ કરવું
 init_db()
     
-    # 2. જો admin યુઝર પહેલેથી ન હોય તો બનાવો, અથવા હોય તો પાસવર્ડ અને રોલ ફિક્સ કરો
+    # 3. જો admin યુઝર પહેલેથી ન હોય તો બનાવો, અથવા હોય તો પાસવર્ડ અને રોલ ફિક્સ કરો
     cursor.execute("SELECT id FROM users WHERE username = 'admin'")
     if not cursor.fetchone():
         cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
                        ('admin', '210784', 'treasurer'))
     else:
-        cursor.execute("UPDATE users SET password='210784', role='treasurer' WHERE username='admin'",)
+        cursor.execute("UPDATE users SET password='210784', role='treasurer' WHERE username='admin'")
+
+    conn.commit()
+    conn.close()
     
     try:
         cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'treasurer'")
